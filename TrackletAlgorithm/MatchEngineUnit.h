@@ -171,7 +171,6 @@ inline typename ProjectionRouterBuffer<BARREL, AllProjectionType>::TCID getTCID(
 }
 
 
-
 inline typename ProjectionRouterBuffer<BARREL, AllProjectionType>::TRKID getTrkID() {
 #pragma HLS inline
   if (!empty()) {
