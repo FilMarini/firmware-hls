@@ -276,7 +276,7 @@ declare -a processing_modules=(
   "TP_L5L6B"
   "TP_L5L6C"
   "TP_L5L6D"
-
+  "TP_L1D1A"
 )
 
 # Function that prints information regarding the usage of this command
