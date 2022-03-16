@@ -36,7 +36,7 @@ namespace TC {
 
   enum projout_index_barrel_ps {L1PHIA = 0, L1PHIB = 1, L1PHIC = 2, L1PHID = 3, L1PHIE = 4, L1PHIF = 5, L1PHIG = 6, L1PHIH = 7, L2PHIA = 8, L2PHIB = 9, L2PHIC = 10, L2PHID = 11, L3PHIA = 12, L3PHIB = 13, L3PHIC = 14, L3PHID = 15, N_PROJOUT_BARRELPS = 16};
   enum projout_index_barrel_2s {L4PHIA = 0, L4PHIB = 1, L4PHIC = 2, L4PHID = 3, L5PHIA = 4, L5PHIB = 5, L5PHIC = 6, L5PHID = 7, L6PHIA = 8, L6PHIB = 9, L6PHIC = 10, L6PHID = 11, N_PROJOUT_BARREL2S = 12};
-  enum projout_index_disk      {D1PHIA = 0, D1PHIB = 1, D1PHIC = 2, D1PHID = 3, D2PHIA = 4, D2PHIB = 5, D2PHIC = 6, D2PHID = 7, D3PHIA = 8, D3PHIB = 9, D3PHIC = 10, D3PHID = 11, D4PHIA = 12, D4PHIB = 13, D4PHIC = 14, D4PHID = 15, N_PROJOUT_DISK = 16};
+  enum projout_index_disk      {D1PHIA = 0, D1PHIB = 1, D1PHIC = 2, D1PHID = 3, D2PHIA = 4, D2PHIB = 5, D2PHIC = 6, D2PHID = 7, D3PHIA = 8, D3PHIB = 9, D3PHIC = 10, D3PHID = 11, D4PHIA = 12, D4PHIB = 13, D4PHIC = 14, D4PHID = 15, D5PHIA = 16, D5PHIB = 17, D5PHIC = 18, D5PHID = 19, N_PROJOUT_DISK = 20};
 
   static const uint8_t nproj_L1 = L1PHIH - L1PHIA + 1;
   static const uint8_t nproj_L2 = L2PHID - L2PHIA + 1;
@@ -48,6 +48,7 @@ namespace TC {
   static const uint8_t nproj_D2 = D2PHID - D2PHIA + 1;
   static const uint8_t nproj_D3 = D3PHID - D3PHIA + 1;
   static const uint8_t nproj_D4 = D4PHID - D4PHIA + 1;
+  static const uint8_t nproj_D5 = D5PHID - D5PHIA + 1;
 
   static const uint8_t shift_L1 = 0;
   static const uint8_t shift_L2 = shift_L1 + nproj_L1;
@@ -60,6 +61,7 @@ namespace TC {
   static const uint8_t shift_D2 = shift_D1 + nproj_D1;
   static const uint8_t shift_D3 = shift_D2 + nproj_D2;
   static const uint8_t shift_D4 = shift_D3 + nproj_D3;
+  static const uint8_t shift_D5 = shift_D4 + nproj_D5;
 
   static const uint32_t mask_L1 = 0xFF << shift_L1;
   static const uint32_t mask_L2 = 0xF << shift_L2;
@@ -71,6 +73,7 @@ namespace TC {
   static const uint32_t mask_D2 = 0xF << shift_D2;
   static const uint32_t mask_D3 = 0xF << shift_D3;
   static const uint32_t mask_D4 = 0xF << shift_D4;
+  static const uint32_t mask_D5 = 0xF << shift_D5;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -122,8 +125,50 @@ namespace TC {
     Types::der_phiD * const der_phiD_output,
     Types::der_rD * const der_rD_output
   );
+  template<TF::seed Seed, regionType InnerRegion, regionType OuterRegion>
+  void calculate_L1D1 (
+    const typename AllStub<InnerRegion>::ASR r1_input,
+    const typename AllStub<InnerRegion>::ASPHI phi1_input,
+    const typename AllStub<InnerRegion>::ASZ z1_input,
+    const typename AllStub<OuterRegion>::ASR r2_input,
+    const typename AllStub<OuterRegion>::ASPHI phi2_input,
+    const typename AllStub<OuterRegion>::ASZ z2_input,
+    const Types::rmean r1mean_input,
+    const Types::zmean z2mean_input,
+    const Types::rmean rproj0_input,
+    const Types::rmean rproj1_input,
+    const Types::rmean rproj2_input,
+    const Types::zmean zproj0_input,
+    const Types::zmean zproj1_input,
+    const Types::zmean zproj2_input,
+    const Types::zmean zproj3_input,
+
+    Types::rinv * const rinv_output,
+    TrackletParameters::PHI0PAR * const phi0_output,
+    TrackletParameters::TPAR * const t_output,
+    Types::z0 * const z0_output,
+    Types::phiL * const phiL_0_output,
+    Types::phiL * const phiL_1_output,
+    Types::phiL * const phiL_2_output,
+    Types::zL * const zL_0_output,
+    Types::zL * const zL_1_output,
+    Types::zL * const zL_2_output,
+    Types::der_phiL * const der_phiL_output,
+    Types::der_zL * const der_zL_output,
+    Types::phiD * const phiD_0_output,
+    Types::phiD * const phiD_1_output,
+    Types::phiD * const phiD_2_output,
+    Types::phiD * const phiD_3_output,
+    Types::rD * const rD_0_output,
+    Types::rD * const rD_1_output,
+    Types::rD * const rD_2_output,
+    Types::rD * const rD_3_output,
+    Types::der_phiD * const der_phiD_output,
+    Types::der_rD * const der_rD_output
+  );
 
   template<TF::seed Seed, regionType InnerRegion, regionType OuterRegion> bool barrelSeeding(const AllStub<InnerRegion> &innerStub, const AllStub<OuterRegion> &outerStub, Types::rinv * const rinv, TrackletParameters::PHI0PAR * const phi0, Types::z0 * const z0, TrackletParameters::TPAR * const t, Types::phiL phiL[4], Types::zL zL[4], Types::der_phiL * const der_phiL, Types::der_zL * const der_zL, Types::flag valid_proj[4], Types::phiD phiD[4], Types::rD rD[4], Types::der_phiD * const der_phiD, Types::der_rD * const der_rD, Types::flag valid_proj_disk[4]);
+  template<TF::seed Seed, regionType InnerRegion, regionType OuterRegion> bool overlapSeeding(const AllStub<InnerRegion> &innerStub, const AllStub<OuterRegion> &outerStub, Types::rinv * const rinv, TrackletParameters::PHI0PAR * const phi0, Types::z0 * const z0, TrackletParameters::TPAR * const t, Types::phiL phiL[4], Types::zL zL[4], Types::der_phiL * const der_phiL, Types::der_zL * const der_zL, Types::flag valid_proj[4], Types::phiD phiD[4], Types::rD rD[4], Types::der_phiD * const der_phiD, Types::der_rD * const der_rD, Types::flag valid_proj_disk[4]);
 
   template<TF::seed Seed, itc iTC> const TrackletProjection<BARRELPS>::TProjTCID ID();
 
@@ -325,7 +370,7 @@ TC::barrelSeeding(const AllStub<InnerRegion> &innerStub, const AllStub<OuterRegi
 // This function calls calculate_L1D1, defined in
 // TrackletCalculator_calculate_L1D1.h, and applies cuts to the results.
 template<TF::seed Seed, regionType InnerRegion, regionType OuterRegion> bool
-TC::overSeeding(const AllStub<InnerRegion> &innerStub, const AllStub<OuterRegion> &outerStub, TC::Types
+TC::overlapSeeding(const AllStub<InnerRegion> &innerStub, const AllStub<OuterRegion> &outerStub, TC::Types
 ::rinv * const rinv, TrackletParameters::PHI0PAR * const phi0, TC::Types::z0 * const z0, TrackletParameters::TPAR * const t, TC::Types::phiL phiL[4], TC::Types::zL zL[4], TC::Types::der_phiL * const der_phiL, TC::Types::der_zL * const der_zL, TC::Types::flag valid_proj[4], TC::Types::phiD phiD[4], TC::Types::rD rD[4], TC::Types::der_phiD * const der_phiD, TC::Types::der_rD * const der_rD, TC::Types::flag valid_proj_disk[4])
 {
   TC::Types::rmean r1mean, rproj[3];
@@ -333,9 +378,9 @@ TC::overSeeding(const AllStub<InnerRegion> &innerStub, const AllStub<OuterRegion
   rproj[0] = rmean[TF::L2];
   rproj[1] = rmean[TF::L3];
   rproj[2] = rmean[TF::L4];
-  ap_int<1> negZ = (innerStub.getZ<0 ? -1 : 1)
+  ap_int<1> negZ = (innerStub.getZ<0 ? -1 : 1);
   TC::Types::zmean z2mean = negZ * zmean[TF::D1];
-  TC::Types::zmean zproj[4] = negZ * {zmean[TF::D2], zmean[TF::D3], zmean[TF::D4],zmean[TF::D5]};
+  TC::Types::zmean zproj[4] =  {negZ * zmean[TF::D2],negZ *  zmean[TF::D3],negZ *  zmean[TF::D4],negZ * zmean[TF::D5]};
   calculate_L1D1<Seed, InnerRegion, OuterRegion>(
       innerStub.getR(),
       innerStub.getPhi(),
@@ -529,7 +574,7 @@ TC::processStubPair(
 
 
 // Calculate the tracklet parameters and projections.
-  if (Seed == TF::L1L2 || Seed == TF::L2L3 || Seed == TF::L3L4 || Seed == L5L6)
+  if (Seed == TF::L1L2 || Seed == TF::L2L3 || Seed == TF::L3L4 || Seed == TF::L5L6)
     success = TC::barrelSeeding<Seed, InnerRegion, OuterRegion>(innerStub, outerStub, &rinv, &phi0, &z0, &t, phiL, zL, &der_phiL, &der_zL, valid_proj, phiD, rD, &der_phiD, &der_rD, valid_proj_disk);
   if (Seed == TF::L1D1)
     success = TC::overlapSeeding<Seed, InnerRegion, OuterRegion>(innerStub, outerStub, &rinv, &phi0, &z0, &t, phiL, zL, &der_phiL, &der_zL, valid_proj, phiD, rD, &der_phiD, &der_rD, valid_proj_disk);
@@ -540,7 +585,7 @@ TC::processStubPair(
   //return; //ryd
 
   bool addL3 = false, addL4 = false, addL5 = false, addL6 = false;
-  if (Seed == L1D1){
+  if (Seed == TF::L1D1){
     const TrackletProjection<DISK> tproj_D2(TCID, trackletIndex, phiD[0], rD[0], der_phiD, der_rD);
     const TrackletProjection<DISK> tproj_D3(TCID, trackletIndex, phiD[1], rD[1], der_phiD, der_rD);
     const TrackletProjection<DISK> tproj_D4(TCID, trackletIndex, phiD[2], rD[2], der_phiD, der_rD);
@@ -551,7 +596,7 @@ TC::processStubPair(
     TC::addProj<DISK, nproj_D4, ((TPROJMaskDisk & mask_D3) >> shift_D3)> (tproj_D4, bx, &projout_disk[D4PHIA], &nproj_disk[D4PHIA], success && valid_proj_disk[2] && !addL4);
     TC::addProj<DISK, nproj_D5, ((TPROJMaskDisk & mask_D4) >> shift_D4)> (tproj_D5, bx, &projout_disk[D5PHIA], &nproj_disk[D5PHIA], success && valid_proj_disk[3] && !addL3);
   }
-  if (Seed == TF::L1L2 || Seed == TF::L2L3 || Seed == TF::L3L4 || Seed == L5L6){
+  if (Seed == TF::L1L2 || Seed == TF::L2L3 || Seed == TF::L3L4 || Seed == TF::L5L6){
     switch (Seed) {
       case TF::L1L2:
         {

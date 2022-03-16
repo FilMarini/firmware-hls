@@ -94,23 +94,29 @@ with open(arguments.wiresFileName, "r") as wiresFile:
   tprojMems = {}
   outerPhiRegion = {}
   for line in wiresFile:
-      # Only barrel-only seeds are supported right now.
+      # Only barrel-only and overlap seeds are supported right now.
       if "TP_L1L2" not in line \
         and "TP_L2L3" not in line \
         and "TP_L3L4" not in line \
-        and "TP_L5L6" not in line:
+        and "TP_L5L6" not in line \
+        and "TP_L1D1" not in line:
           continue      
+   
       line = line.rstrip()
       tpName = re.sub(r".*TP_(.....).*", r"TP_\1", line)
-  
-      if "TP_L1L2" in line or "TP_L2L3" in line or "TP_L3L4" in line:
+      
+      if "TP_L1D1" in line or "TP_L1L2" in line or "TP_L2L3" in line or "TP_L3L4" in line:
         innerType[tpName] = "BARRELPS"
       else:
         innerType[tpName] = "BARREL2S"
+
       if "TP_L1L2" in line or "TP_L2L3" in line:
         outerType[tpName] = "BARRELPS"
       else:
-        outerType[tpName] = "BARREL2S"
+        if "TP_L1D1" in line:
+          outerType[tpName] = "DISK"
+        else:
+          outerType[tpName] = "BARREL2S"
       memName = line.split()[0]
   
       if "TP_L2L3" in line:
@@ -127,7 +133,7 @@ with open(arguments.wiresFileName, "r") as wiresFile:
               if tpName not in asInnerMems:
                   asInnerMems[tpName] = []
               asInnerMems[tpName].append(memName)
-          if memName.startswith("AS_L2") or memName.startswith("AS_L4") or memName.startswith("AS_L6"):
+          if memName.startswith("AS_L2") or memName.startswith("AS_D1") or memName.startswith("AS_L4") or memName.startswith("AS_L6"):
               if tpName not in asOuterMems:
                   asOuterMems[tpName] = []
               asOuterMems[tpName].append(memName)
@@ -220,6 +226,8 @@ with open(os.path.join(dirname, arguments.outputDirectory, "TrackletProcessor_pa
       regionlutlen = 2048
       if seed == "L5L6":
         regionlutlen = 4096
+      if seed == "L1D1":
+        regionlutlen = 16384
       # numbers of memories
       nASMemInner = len(asInnerMems[tpName])
       nASMemOuter = len(asOuterMems[tpName])

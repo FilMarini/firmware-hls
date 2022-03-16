@@ -277,6 +277,17 @@ declare -a processing_modules=(
   "TP_L5L6C"
   "TP_L5L6D"
   "TP_L1D1A"
+  "TP_L1D1B"
+  "TP_L1D1C"
+  "TP_L1D1D"
+  "TP_L1D1E"
+  "TP_L1D1F"
+  "TP_L1D1G"
+  "TP_L1D1H"
+  "TP_L1D1I"
+  "TP_L1D1J"
+  "TP_L1D1K"
+  "TP_L1D1L"
 )
 
 # Function that prints information regarding the usage of this command
@@ -441,7 +452,7 @@ do
           find ${table_location} -type f -name "METable_${layer}.tab" -exec ln -sf ../../{} ${table_target_dir}/ \;
   elif [[ ${module_type} == "TP" ]]
   then
-          seed=`echo ${module} | sed "s/.*_\(L[1-6]L[1-6]\).*$/\1/g"`
+          seed=`echo ${module} | sed "s/.*_\(L[1-6][L|D][1-6]\).*$/\1/g"`
           find ${table_location} -type f -name "TP_${seed}.tab" -exec ln -sf ../../{} ${table_target_dir}/ \;
           find ${table_location} -type f -name "${module}_*.tab" -exec ln -sf ../../{} ${table_target_dir}/ \;
   elif [[ ${module_type} == "MC" ]] || [[ ${module_type} == "TE" ]]

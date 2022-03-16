@@ -77,6 +77,14 @@ int main()
   const string innerStubPattern = "AllInnerStubs*_L5*";
   const string outerStubPattern = "AllStubs*_L6*";
   const int NTEUnits=3;
+#elif SEED_ == L1D1_
+  ap_uint<10> innervmtable[2048] =
+#include "../emData/TP/tables/TP_L1D1.tab"
+  const auto InnerStubType = BARRELPS;
+  const auto OuterStubType = DISK;
+  const string innerStubPattern = "AllInnerStubs*_L1*";
+  const string outerStubPattern = "AllStubs*_D1*";
+  const int NTEUnits=2;
 #else
   #error "Undefined seed"
 #endif
@@ -176,6 +184,18 @@ std::cout<<module_name[MODULE_];
 #elif (SEED_==L5L6_) and (ITC_ == D_)
   ap_uint<8> useregion[] =
 #include "../emData/TP/tables/TP_L5L6D_usereg.tab"
+#elif (SEED_==L1D1_) and (ITC_ == A_)
+  ap_uint<8> useregion[] =
+#include "../emData/TP/tables/TP_L1D1A_usereg.tab"
+#elif (SEED_==L1D1_) and (ITC_ == B_)
+  ap_uint<8> useregion[] =
+#include "../emData/TP/tables/TP_L1D1B_usereg.tab"
+#elif (SEED_==L1D1_) and (ITC_ == C_)
+  ap_uint<8> useregion[] =
+#include "../emData/TP/tables/TP_L1D1C_usereg.tab"
+#elif (SEED_==L1D1_) and (ITC_ == D_)
+  ap_uint<8> useregion[] =
+#include "../emData/TP/tables/TP_L1D1D_usereg.tab"
 
 #endif
 //

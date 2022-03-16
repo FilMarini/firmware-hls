@@ -1,12 +1,12 @@
 #include "ap_int.h"
-
-void TC::calculate L1D1 (
-  const AllStub<InnerRegion>::ASR r1_input,
-  const AllStub<InnerRegion>::ASPHI phi1_input,
-  const AllStub<InnerRegion>::ASZ z1_input,
-  const AllStub<OuterRegion>::ASR r2_input,
-  const AllStub<OuterRegion>::ASPHI phi2_input,
-  const AllStub<OuterRegion>::ASZ z2_input,
+template<TF::seed Seed, regionType InnerRegion, regionType OuterRegion>
+void TC::calculate_L1D1 (
+  const typename AllStub<InnerRegion>::ASR r1_input,
+  const typename AllStub<InnerRegion>::ASPHI phi1_input,
+  const typename AllStub<InnerRegion>::ASZ z1_input,
+  const typename AllStub<OuterRegion>::ASR r2_input,
+  const typename AllStub<OuterRegion>::ASPHI phi2_input,
+  const typename AllStub<OuterRegion>::ASZ z2_input,
   const TC::Types::rmean r1mean_input,
   const TC::Types::zmean z2mean_input,
   const TC::Types::rmean rproj0_input,
@@ -74,22 +74,26 @@ const ap_int<16> dphi = phi2 - phi1;
 const ap_int<12> dr = r2 - r1abs;
 //
 // STEP 3
-
-if (z2mean_input > 0){
+const ap_int<18> drinv;
+const ap_uint<11> addr_drinv = dr & 2047; // address for the LUT
+switch(z2mean_input>0){
+case(1):{
   static const ap_int<18> LUT_drinv[2048] = {
 #if __has_include("../emData/TC/tables/TC_L1F1_drinv.tab")
 #  include "../emData/TC/tables/TC_L1F1_drinv.tab"
+#endif
   };
+  drinv = LUT_drinv[addr_drinv];
 }
-else {
+case(0):{
   static const ap_int<18> LUT_drinv[2048] = {
 #if __has_include("../emData/TC/tables/TC_L1B1_drinv.tab")
 #  include "../emData/TC/tables/TC_L1B1_drinv.tab"
+#endif
   };
+  drinv = LUT_drinv[addr_drinv];
 }
-
-const ap_uint<11> addr_drinv = dr & 2047; // address for the LUT
-const ap_int<18> drinv = LUT_drinv[addr_drinv];
+}
 //
 // STEP 4
 
@@ -950,21 +954,27 @@ const ap_int<34> x7_tmp = x2 * a2;
 const ap_int<18> x7 = x7_tmp >> 16;
 //
 // STEP 11
-if (z2mean_input > 0){
+const ap_uint<11> addr_invt = (t_final>>1) & 2047; // address for the LUT
+const ap_int<18> invt;
+
+switch (z2mean_input > 0){
+case(1):{
   static const ap_int<18> LUT_invt[2048] = {
 #if __has_include("../emData/TC/tables/TC_L1F1_invt.tab")
 #  include "../emData/TC/tables/TC_L1F1_invt.tab"
+#endif
+
   };
+  invt = LUT_invt[addr_invt];
 }
-else {
+case(0):{
   static const ap_int<18> LUT_invt[2048] = {
 #if __has_include("../emData/TC/tables/TC_L1B1_invt.tab")
 #  include "../emData/TC/tables/TC_L1B1_invt.tab"
+#endif
   };
-}
-
-const ap_uint<11> addr_invt = (t_final>>1) & 2047; // address for the LUT
-const ap_int<18> invt = LUT_invt[addr_invt];
+  invt = LUT_invt[addr_invt];
+}}
 //
 // STEP 12
 
