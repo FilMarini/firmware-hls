@@ -144,7 +144,7 @@ declare -a processing_modules=(
   "TC_L5L6B"
   "TC_L5L6C"
   "TC_L5L6D"
-
+  "TC_L1D1C"
   # ProjectionRouter
   "PR_L1PHIA"
   "PR_L1PHIB"

@@ -52,14 +52,14 @@ void TC::calculate_L1D1 (
 // 10 bits 	 2^(-7)	0.0078125
 static const ap_int<10> plus2 = 256;
 // units 2^(0)Kr^(1)	0.0292969
-const ap_int<8> r1 = r1_input;
+const ap_int<8> r1 = ap_int<8>(r1_input);
 // 13 bits 	 2^(0)Kr^(1)	0.0292969
 // units 2^(0)Kphi^(1)	7.84121e-06
-const ap_int<18> phi2 = phi2_input;
+const ap_int<18> phi2 = ap_int<18>(phi2_input)<<3;
 // units 2^(0)Kphi^(1)	7.84121e-06
-const ap_int<18> phi1 = phi1_input;
+const ap_int<18> phi1 = ap_int<18>(phi1_input)<<3;
 // units 2^(0)Kr^(1)	0.0292969
-const ap_int<13> r2 = r2_input;
+const ap_int<13> r2 = ap_int<13>(r2_input);
 //
 // STEP 1
 
@@ -71,10 +71,10 @@ const ap_int<16> dphi = phi2 - phi1;
 // STEP 2
 
 // 12 bits 	 2^(0)Kr^(1)	0.0292969
-const ap_int<12> dr = r2 - r1abs;
+const ap_int<11> dr = r2 - r1abs;
 //
 // STEP 3
-const ap_int<18> drinv;
+ap_int<18> drinv;
 const ap_uint<11> addr_drinv = dr & 2047; // address for the LUT
 switch(z2mean_input>0){
 case(1):{
@@ -84,6 +84,7 @@ case(1):{
 #endif
   };
   drinv = LUT_drinv[addr_drinv];
+  break;
 }
 case(0):{
   static const ap_int<18> LUT_drinv[2048] = {
@@ -92,6 +93,7 @@ case(0):{
 #endif
   };
   drinv = LUT_drinv[addr_drinv];
+  break;
 }
 }
 //
@@ -224,10 +226,10 @@ const ap_int<18> phi0_final = phi0;
 // STEP 0
 
 // units 2^(0)Kz^(1)	0.0585938
-const ap_int<7> z2 = z2_input;
+const ap_int<7> z2 = ap_int<7>(z2_input);
 // 14 bits 	 2^(0)Kz^(1)	0.0585938
 // units 2^(0)Kz^(1)	0.0585938
-const ap_int<12> z1 = z1_input;
+const ap_int<12> z1 = ap_int<12>(z1_input);
 //
 // STEP 1
 
@@ -238,6 +240,7 @@ const ap_int<14> z2abs = z2 + z2mean_input;
 
 // 12 bits 	 2^(0)Kz^(1)	0.0585938
 const ap_int<12> dz = z2abs - z1;
+//std::cout<<"dz: "<<dz<<std::endl;
 //
 // STEP 3
 
@@ -275,8 +278,7 @@ const ap_int<18> t = t_tmp >> 13;
 // STEP 11
 
 // 13 bits 	 2^(-10)Kr^(-1)Kz^(1)	0.00195312
-const ap_int<13> t_final = t >> 5;
-
+const ap_int<13> t_final = t>>5;
 //
 // calculating z0_final
 //
@@ -918,8 +920,7 @@ const ap_int<10> der_zL_final = t_final >> 3;
 // STEP 0
 
 // units 2^(0)Kz^(1)	0.0585938
-const ap_int<14> zproj0 = zproj0_input;
-//
+const ap_int<14> zproj0 = t > 0 ? ap_int<14>(zproj0_input) : ap_int<14>(-zproj0_input-1);
 // STEP 1
 
 //
@@ -955,7 +956,7 @@ const ap_int<18> x7 = x7_tmp >> 16;
 //
 // STEP 11
 const ap_uint<11> addr_invt = (t_final>>1) & 2047; // address for the LUT
-const ap_int<18> invt;
+ap_int<18> invt;
 
 switch (z2mean_input > 0){
 case(1):{
@@ -966,6 +967,7 @@ case(1):{
 
   };
   invt = LUT_invt[addr_invt];
+  break;
 }
 case(0):{
   static const ap_int<18> LUT_invt[2048] = {
@@ -974,6 +976,7 @@ case(0):{
 #endif
   };
   invt = LUT_invt[addr_invt];
+  break;
 }}
 //
 // STEP 12
@@ -1012,7 +1015,7 @@ const ap_int<17> phiD_0_final = phiD_0 >> 1;
 // STEP 0
 
 // units 2^(0)Kz^(1)	0.0585938
-const ap_int<14> zproj1 = zproj1_input;
+const ap_int<14> zproj1 = t > 0 ? ap_int<14>(zproj1_input) : ap_int<14>(-zproj1_input-1);
 //
 // STEP 1
 
@@ -1083,7 +1086,7 @@ const ap_int<17> phiD_1_final = phiD_1 >> 1;
 // STEP 0
 
 // units 2^(0)Kz^(1)	0.0585938
-const ap_int<14> zproj2 = zproj2_input;
+const ap_int<14> zproj2 = t > 0 ? ap_int<14>(zproj2_input) : ap_int<14>(-zproj2_input-1);
 //
 // STEP 1
 
@@ -1154,7 +1157,7 @@ const ap_int<17> phiD_2_final = phiD_2 >> 1;
 // STEP 0
 
 // units 2^(0)Kz^(1)	0.0585938
-const ap_int<14> zproj3 = zproj3_input;
+const ap_int<14> zproj3 = t > 0 ? ap_int<14>(zproj3_input) : ap_int<14>(-zproj3_input-1);
 //
 // STEP 1
 

@@ -59,7 +59,11 @@ class ProjoutIndexDisk(Enum):
     D4PHIB = 13
     D4PHIC = 14
     D4PHID = 15
-    N_PROJOUT_DISK = 16
+    D5PHIA = 16
+    D5PHIB = 17
+    D5PHIC = 18
+    D5PHID = 19
+    N_PROJOUT_DISK = 20
 
 iAllStub_index = {
   "A" : 0,
@@ -79,8 +83,8 @@ iAllStub_index = {
 parser = argparse.ArgumentParser(description="This script generates TrackletProcessorTop.h, TrackletProcessorTop.cc, and\
 TrackletProcessor_parameters.h in the TopFunctions/ directory.",
                                  epilog="")
-parser.add_argument("-o", "--outputDirectory", metavar="DIR", default="../TopFunctions/", type=str, help="The directory in which to write the output files (default=%(default)s)")
-parser.add_argument("-w", "--wiresFileName", metavar="WIRES_FILE", default="LUTs/wires.dat", type=str, help="Name and directory of the configuration file for wiring (default = %(default)s)")
+parser.add_argument("-o", "--outputDirectory", metavar="DIR", default="../TopFunctions/CombinedConfig", type=str, help="The directory in which to write the output files (default=%(default)s)")
+parser.add_argument("-w", "--wiresFileName", metavar="WIRES_FILE", default="LUTsCM/wires.dat", type=str, help="Name and directory of the configuration file for wiring (default = %(default)s)")
 arguments = parser.parse_args()
 
 # First, parse the wires file and store the memory names associated with TPs in
@@ -89,6 +93,7 @@ with open(arguments.wiresFileName, "r") as wiresFile:
   asInnerMems = {}
   innerType = {}
   outerType = {}
+  vmsteType={}
   asOuterMems = {}
   vmsteMems = {}
   tprojMems = {}
@@ -114,9 +119,13 @@ with open(arguments.wiresFileName, "r") as wiresFile:
         outerType[tpName] = "BARRELPS"
       else:
         if "TP_L1D1" in line:
-          outerType[tpName] = "DISK"
+          outerType[tpName] = "DISKPS"
         else:
           outerType[tpName] = "BARREL2S"
+      if "TP_L1D1" in line:
+        vmsteType[tpName]="DISKPS"
+      else:
+        vmsteType[tpName]=outerType[tpName]
       memName = line.split()[0]
   
       if "TP_L2L3" in line:
@@ -268,11 +277,11 @@ with open(os.path.join(dirname, arguments.outputDirectory, "TrackletProcessor_pa
           "\n"
           "void TrackletProcessor_" + seed + iTC + "(\n"
           "    const BXType bx,\n"
-          "    const ap_uint<1+2*TrackletEngineUnit<TF::"+seed+", TC::"+iTC+","+innerType[tpName]+","+outerType[tpName]+">::kNBitsRZFine+TrackletEngineUnit<TF::"+seed+", TC::"+iTC+","+innerType[tpName]+","+outerType[tpName]+">::kNBitsRZBin> lut[1<<(kNbitszfinebintable+kNbitsrfinebintable)],\n"
-          "    const ap_uint<(1<<TrackletEngineUnit<TF::"+seed+", TC::"+iTC+","+innerType[tpName]+","+outerType[tpName]+">::kNBitsPhiBins)> regionlut[1<<(AllStubInner<"+innerType[tpName]+">::kASBendSize+AllStubInner<"+innerType[tpName]+">::kASFinePhiSize)],\n" 
+          "    const ap_uint<1+2*TrackletEngineUnit<TF::"+seed+", TC::"+iTC+","+innerType[tpName]+","+vmsteType[tpName]+">::kNBitsRZFine+TrackletEngineUnit<TF::"+seed+", TC::"+iTC+","+innerType[tpName]+","+vmsteType[tpName]+">::kNBitsRZBin> lut[1<<(kNbitszfinebintable+kNbitsrfinebintable)],\n"
+          "    const ap_uint<(1<<TrackletEngineUnit<TF::"+seed+", TC::"+iTC+","+innerType[tpName]+","+vmsteType[tpName]+">::kNBitsPhiBins)> regionlut[1<<(AllStubInner<"+innerType[tpName]+">::kASBendSize+AllStubInner<"+innerType[tpName]+">::kASFinePhiSize)],\n" 
           "    const AllStubInnerMemory<"+innerType[tpName]+"> innerStubs["+str(nASMemInner)+"],\n"
-          "    const AllStubMemory<OuterRegion<TF::" + seed + ">()>* outerStubs,\n"
-          "    const VMStubTEOuterMemoryCM<"+outerType[tpName]+", kNbitsrzbin, kNbitsphibin, kNTEUnits[TF::"+seed+"]> outerVMStubs,\n"
+          "    const AllStubMemory<" + outerType[tpName] + ">* outerStubs,\n"
+          "    const VMStubTEOuterMemoryCM<"+vmsteType[tpName]+", kNbitsrzbin, kNbitsphibin, kNTEUnits[TF::"+seed+"]> outerVMStubs,\n"
           "    TrackletParameterMemory * trackletParameters,\n"
           "    TrackletProjectionMemory<BARRELPS> projout_barrel_ps[],\n"
           "    TrackletProjectionMemory<BARREL2S> projout_barrel_2s[],\n"
@@ -288,8 +297,8 @@ with open(os.path.join(dirname, arguments.outputDirectory, "TrackletProcessor_pa
           "    const ap_uint<10> lut[2048],\n"
           "    const ap_uint<8> regionlut["+str(regionlutlen)+"],\n"
           "    const AllStubInnerMemory<"+innerType[tpName]+"> innerStubs[" + str(nASMemInner) + "],\n"
-          "    const AllStubMemory<OuterRegion<TF::" + seed + ">()>* outerStubs ,\n"
-          "    const VMStubTEOuterMemoryCM<" + outerType[tpName] + ", kNbitsrzbin, kNbitsphibin, kNTEUnits[TF::"+ seed +"]> outerVMStubs,\n"
+          "    const AllStubMemory<" + outerType[tpName] + ">* outerStubs ,\n"
+          "    const VMStubTEOuterMemoryCM<" + vmsteType[tpName] + ", kNbitsrzbin, kNbitsphibin, kNTEUnits[TF::"+ seed +"]> outerVMStubs,\n"
           "    TrackletParameterMemory * trackletParameters,\n"
           "    TrackletProjectionMemory<BARRELPS> projout_barrel_ps[TC::N_PROJOUT_BARRELPS],\n"
           "    TrackletProjectionMemory<BARREL2S> projout_barrel_2s[TC::N_PROJOUT_BARREL2S],\n"

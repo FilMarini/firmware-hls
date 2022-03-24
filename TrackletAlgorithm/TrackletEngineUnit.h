@@ -14,8 +14,8 @@ class TrackletEngineUnit {
     kNBitsRZBin=3,
     kNBitsRZFine=3,
     kNBitsPhiBins=3,
-    kNBitsPTLutInner=(Seed==TF::L5L6)?1024:(Seed==(TF::L1L2||TF::L2L3)?256:512),
-    kNBitsPTLutOuter=(Seed==TF::L5L6)?1024:(Seed==(TF::L1L2||TF::L2L3||TF::L3L4)?256:512)
+    kNBitsPTLutInner=(Seed==TF::L1D1)?4098:((Seed==TF::L5L6)?1024:(Seed==(TF::L1L2||TF::L2L3)?256:512)),
+    kNBitsPTLutOuter=(Seed==TF::L1D1)?4098:((Seed==TF::L5L6)?1024:(Seed==(TF::L1L2||TF::L2L3||TF::L3L4)?256:512))
   };
 
   typedef ap_uint<VMStubTEOuter<VMSTEType>::kVMSTEOIDSize+kNBits_MemAddr+AllStub<innerRegion>::kAllStubSize> STUBID;
@@ -35,6 +35,27 @@ class TrackletEngineUnit {
 #pragma HLS ARRAY_PARTITION variable=stubptouterlutnew_ complete dim=1
 
 /////  Grabs the appropriate lut based on seed and iTC (need to be included in download.sh)
+if (Seed==TF::L1D1&& iTC==TC::C){
+      const ap_uint<1> stubptinnertmp[]=
+#if __has_include("../emData/TP/tables/TP_L1D1C_stubptinnercut.tab")
+#  include "../emData/TP/tables/TP_L1D1C_stubptinnercut.tab"
+#else
+    {};
+#endif
+      const ap_uint<1> stubptoutertmp[]=
+#if __has_include("../emData/TP/tables/TP_L1D1C_stubptoutercut.tab")
+#  include "../emData/TP/tables/TP_L1D1C_stubptoutercut.tab"
+#else
+    {};
+#endif
+      for(unsigned int i=0;i<kNBitsPTLutInner;i++) {
+        stubptinnerlutnew_[i] = stubptinnertmp[i];
+      }
+      for(unsigned int i=0;i<kNBitsPTLutOuter;i++) {
+        stubptouterlutnew_[i] = stubptoutertmp[i];
+      }
+    }
+
 if (Seed==TF::L1L2&& iTC==TC::A){
       const ap_uint<1> stubptinnertmp[]=
 #if __has_include("../emData/TP/tables/TP_L1L2A_stubptinnercut.tab")

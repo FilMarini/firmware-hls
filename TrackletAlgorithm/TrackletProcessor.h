@@ -361,8 +361,8 @@ TC::barrelSeeding(const AllStub<InnerRegion> &innerStub, const AllStub<OuterRegi
   return valid_rinv && valid_z0 && keep;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// IN P R O G R  E  SSS
+//////////////////////////////////////
+//FIXME WIP
 //////////////////////////////////////
 
 #include "TrackletCalculator_calculate_L1D1.h"
@@ -378,9 +378,10 @@ TC::overlapSeeding(const AllStub<InnerRegion> &innerStub, const AllStub<OuterReg
   rproj[0] = rmean[TF::L2];
   rproj[1] = rmean[TF::L3];
   rproj[2] = rmean[TF::L4];
-  ap_int<1> negZ = (innerStub.getZ<0 ? -1 : 1);
-  TC::Types::zmean z2mean = negZ * zmean[TF::D1];
-  TC::Types::zmean zproj[4] =  {negZ * zmean[TF::D2],negZ *  zmean[TF::D3],negZ *  zmean[TF::D4],negZ * zmean[TF::D5]};
+  ap_int<2> negZ = ((innerStub.getZ()<0) ? -1 : 1);
+  //std::cout<<"negz:"<<negZ;
+  TC::Types::zmean z2mean = zmean[TF::D1];
+  TC::Types::zmean zproj[4] = {zmean[TF::D2], zmean[TF::D3],  zmean[TF::D4],zmean[TF::D5]};
   calculate_L1D1<Seed, InnerRegion, OuterRegion>(
       innerStub.getR(),
       innerStub.getPhi(),
@@ -569,8 +570,8 @@ TC::processStubPair(
   bool success;
 #pragma HLS array_partition variable=rD complete
 
-  //std::cout << "barrelSeeding: innerStub phi z r : "<<innerStub.getPhi()<<" "<<innerStub.getZ()<<" "<<innerStub.getR()<<std::endl;
-  //std::cout << "barrelSeeding: outerStub phi z r : "<<outerStub.getPhi()<<" "<<outerStub.getZ()<<" "<<outerStub.getR()<<std::endl;
+  //std::cout << "overlapSeeding: innerStub phi z r : "<<innerStub.getPhi()<<" "<<innerStub.getZ()<<" "<<innerStub.getR()<<std::endl;
+  //std::cout << "overlapSeeding: outerStub phi z r : "<<outerStub.getPhi()<<" "<<outerStub.getZ()<<" "<<outerStub.getR()<<std::endl;
 
 
 // Calculate the tracklet parameters and projections.
@@ -837,6 +838,7 @@ TrackletProcessor(
 
 
     if (HaveTEData) {
+      //std::cout<<"HAVETEDAT";
       TC::processStubPair<Seed, InnerRegion, OuterRegion, TPROJMaskBarrel<Seed, iTC>(), TPROJMaskDisk<Seed, iTC>()>(bx, innerIndex, AllStub<InnerRegion>(innerStub), outerIndex, outerStub, TCId, trackletIndex, trackletParameters, projout_barrel_ps, projout_barrel_2s, projout_disk, npar, nproj_barrel_ps, nproj_barrel_2s, nproj_disk);
     }
     
@@ -861,7 +863,8 @@ TrackletProcessor(
       ap_uint<NBitsPhiRegion> iAllstub=OuterPhiRegion;
       ap_uint<NfinephiBits> outerfinephi = (iAllstub, teunits[k].ireg___, finephi);
       
-      constexpr unsigned int NdphiBits = (Seed==TF::L5L6) ? 6 : 5;
+      constexpr unsigned int NdphiBits = (Seed==TF::L1D1)?5:((Seed==TF::L5L6) ? 6 : 5);
+
       ap_uint<NdphiBits> idphi,idphitmp;
       ap_uint<NdphiBits+1> outerfinephitmp = outerfinephi&((1<<(NdphiBits+1))-1);
       ap_uint<NdphiBits+1> innerfinephitmp = AllStubInner<InnerRegion>(teunits[k].innerstub___).getFinePhi()&((1<<(NdphiBits+1))-1);
@@ -1017,10 +1020,14 @@ TrackletProcessor(
     //Get z-position and top bits for LUT
     auto z = stub__.getZ();
     auto indexz = z.range(z.length()-1,z.length()-kNbitszfinebintable);
+      
+    //auto indexz = z.range(z.length()-1,z.length()-kNbitszfinebintableDisk); //FIXME doesn't work with both disks and barrels for now
     
     //Get r-position and top bits for LUT
     auto r = stub__.getR();
     auto indexr = r.range(r.length()-1,r.length()-kNbitsrfinebintable);
+    
+    
     
     //Get bend and fine phi for LUT
     auto bend = stub__.getBend();
@@ -1029,8 +1036,22 @@ TrackletProcessor(
     //This LUT tells us which range in r/z to look for stubs in the other layer/disk
     lutval___ = lut[(indexz,indexr)];
     
+
+    auto useregindex = (innerfinephi,bend);
+
+    if (Seed == TF::D1D2 || Seed == TF::D3D4 || Seed == TF::L1D1 || Seed == TF::L2D1) {
+      //FIXME If the lookupbits were rationally organized this would be much simpler
+      ap_uint<2> nrbits = 3;
+      ap_uint<3> ir = ((start & ((1 << (nrbits - 1)) - 1)) << 1) + (rzfinebinfirst >> (3 - 1));
+      useregion___ = regionlut[(useregindex,ir)];
+      //std::cout<<"useregindex: "<<(useregindex,ir)<<"getZ: "<<z<<"getR: "<<r;
+      }
+    else{
+      useregion___ = regionlut[useregindex];
+    }
+    //std::cout<<"start:"<<start<<"rzfinebinfirst:"<<rzfinebinfirst<<"indexz: "<<indexz<<"indexr: "<<indexr<<std::endl;
     //This lut tells us which range in phi to loof for stubs the other layer/disk
-    useregion___ = regionlut[(innerfinephi,bend)];
+
     
     goodstub___ = goodstub__;
     stub___ = stub__;
