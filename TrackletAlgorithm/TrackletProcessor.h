@@ -380,7 +380,7 @@ TC::overlapSeeding(const AllStub<InnerRegion> &innerStub, const AllStub<OuterReg
   rproj[2] = rmean[TF::L4];
   ap_int<2> negZ = ((innerStub.getZ()<0) ? -1 : 1);
   //std::cout<<"negz:"<<negZ;
-  TC::Types::zmean z2mean = zmean[TF::D1];
+  TC::Types::zmean z2mean = negZ*zmean[TF::D1];
   TC::Types::zmean zproj[4] = {zmean[TF::D2], zmean[TF::D3],  zmean[TF::D4],zmean[TF::D5]};
   calculate_L1D1<Seed, InnerRegion, OuterRegion>(
       innerStub.getR(),
@@ -425,37 +425,6 @@ TC::overlapSeeding(const AllStub<InnerRegion> &innerStub, const AllStub<OuterReg
 
   //return false; //ryd
 
-// Determine which layer projections are valid.
-  valid_proj: for (ap_uint<3> i = 0; i < 3; i++) {
-#pragma HLS unroll
-
-    bool valid_zmin=zL[i] >= -(1 << (TrackletProjection<BARRELPS>::kTProjRZSize - 1));
-    bool valid_zmax=zL[i] < (1 << (TrackletProjection<BARRELPS>::kTProjRZSize - 1));
-    bool valid_phimax=phiL[i] < ((1 << TrackletProjection<BARREL2S>::kTProjPhiSize) - 1);
-    bool valid_phimin=phiL[i] > 0;
-
-    valid_proj[i] = valid_zmin && valid_zmax && valid_phimax && valid_phimin;
-
-    /*
-    valid_proj[i] = true;
-    if (zL[i] < -(1 << (TrackletProjection<BARRELPS>::kTProjRZSize - 1)))
-      valid_proj[i] = false;
-    if (zL[i] >= (1 << (TrackletProjection<BARRELPS>::kTProjRZSize - 1)))
-      valid_proj[i] = false;
-    if (phiL[i] >= ((1 << TrackletProjection<BARREL2S>::kTProjPhiSize) - 1))
-      valid_proj[i] = false;
-    if (phiL[i] <= 0)
-      valid_proj[i] = false;
-    */
-
-    if (rproj[i] < 2048) {
-      phiL[i] >>= (TrackletProjection<BARREL2S>::kTProjPhiSize - TrackletProjection<BARRELPS>::kTProjPhiSize);
-      if (phiL[i] >= (1 << TrackletProjection<BARRELPS>::kTProjPhiSize) - 1)
-        phiL[i] = (1 << TrackletProjection<BARRELPS>::kTProjPhiSize) - 2;
-    }
-    else
-      zL[i] >>= (TrackletProjection<BARRELPS>::kTProjRZSize - TrackletProjection<BARREL2S>::kTProjRZSize);
-  }
 
 // Determine which disk projections are valid.
   valid_proj_disk: for (ap_uint<3> i = 0; i < 4; i++) {
@@ -465,6 +434,8 @@ TC::overlapSeeding(const AllStub<InnerRegion> &innerStub, const AllStub<OuterReg
     bool valid_phimax=phiD[i]<(1 << TrackletProjection<BARRELPS>::kTProjPhiSize) - 1;
     bool valid_r=rD[i] >= 342 && rD[i] < 2048;
     valid_proj_disk[i] = valid_t && valid_phimin && valid_phimax && valid_r;
+    if (i==0){
+    std::cout<<"i valid_proj_disk: "<<i<< " " << valid_proj_disk[i]<<std::endl;}
 
   }
 
@@ -472,7 +443,7 @@ TC::overlapSeeding(const AllStub<InnerRegion> &innerStub, const AllStub<OuterReg
 // impact parameter.
 
   bool valid_rinv=abs(*rinv) < floatToInt(rinvcut, krinv);
-  bool valid_z0=abs(*z0) < ((Seed == TF::L1L2) ? floatToInt(z0cut, kz0) : floatToInt(1.5*z0cut,kz0));
+  bool valid_z0=abs(*z0) < ((Seed == TF::L1L2 || Seed == TF::L1D1 || Seed ==TF ::L2D1 ) ? floatToInt(z0cut, kz0) : floatToInt(1.5*z0cut,kz0));
 
   const ap_int<TrackletParameters::kTParPhi0Size + 2> phicrit = *phi0 - (*rinv>>8)*ifactor;
   const bool keep = (phicrit > phicritmincut) && (phicrit < phicritmaxcut);
@@ -592,10 +563,10 @@ TC::processStubPair(
     const TrackletProjection<DISK> tproj_D4(TCID, trackletIndex, phiD[2], rD[2], der_phiD, der_rD);
     const TrackletProjection<DISK> tproj_D5(TCID, trackletIndex, phiD[3], rD[3], der_phiD, der_rD);
   
-    TC::addProj<DISK, nproj_D2, ((TPROJMaskDisk & mask_D1) >> shift_D1)> (tproj_D2, bx, &projout_disk[D2PHIA], &nproj_disk[D2PHIA], success && valid_proj_disk[0] && !addL6);
-    TC::addProj<DISK, nproj_D3, ((TPROJMaskDisk & mask_D2) >> shift_D2)> (tproj_D3, bx, &projout_disk[D3PHIA], &nproj_disk[D3PHIA], success && valid_proj_disk[1] && !addL5);
-    TC::addProj<DISK, nproj_D4, ((TPROJMaskDisk & mask_D3) >> shift_D3)> (tproj_D4, bx, &projout_disk[D4PHIA], &nproj_disk[D4PHIA], success && valid_proj_disk[2] && !addL4);
-    TC::addProj<DISK, nproj_D5, ((TPROJMaskDisk & mask_D4) >> shift_D4)> (tproj_D5, bx, &projout_disk[D5PHIA], &nproj_disk[D5PHIA], success && valid_proj_disk[3] && !addL3);
+    TC::addProj<DISK, nproj_D2, ((TPROJMaskDisk & mask_D2) >> shift_D2)> (tproj_D2, bx, &projout_disk[D2PHIA], &nproj_disk[D2PHIA], success && valid_proj_disk[0]);
+    TC::addProj<DISK, nproj_D3, ((TPROJMaskDisk & mask_D3) >> shift_D3)> (tproj_D3, bx, &projout_disk[D3PHIA], &nproj_disk[D3PHIA], success && valid_proj_disk[1]);
+    TC::addProj<DISK, nproj_D4, ((TPROJMaskDisk & mask_D4) >> shift_D4)> (tproj_D4, bx, &projout_disk[D4PHIA], &nproj_disk[D4PHIA], success && valid_proj_disk[2]);
+    TC::addProj<DISK, nproj_D5, ((TPROJMaskDisk & mask_D5) >> shift_D5)> (tproj_D5, bx, &projout_disk[D5PHIA], &nproj_disk[D5PHIA], success && valid_proj_disk[3]);
   }
   if (Seed == TF::L1L2 || Seed == TF::L2L3 || Seed == TF::L3L4 || Seed == TF::L5L6){
     switch (Seed) {
