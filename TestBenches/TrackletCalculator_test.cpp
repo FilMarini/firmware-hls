@@ -49,6 +49,11 @@ int main()
   const auto OuterStubType = BARREL2S;
   const string innerStubPattern = "AllStubs*_L5*";
   const string outerStubPattern = "AllStubs*_L6*";
+#elif SEED_ == L1D1_
+  const auto InnerStubType = BARRELPS;
+  const auto OuterStubType = DISKPS;
+  const string innerStubPattern = "AllStubs*_L1*";
+  const string outerStubPattern = "AllStubs*_D1*";
 #else
   #error "Undefined seed"
 #endif

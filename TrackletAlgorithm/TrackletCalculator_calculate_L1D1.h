@@ -52,7 +52,7 @@ void TC::calculate_L1D1 (
 // 10 bits 	 2^(-7)	0.0078125
 static const ap_int<10> plus2 = 256;
 // units 2^(0)Kr^(1)	0.0292969
-const ap_int<8> r1 = ap_int<8>(r1_input);
+const ap_int<8> r1 = ap_int<8>(r1_input)<<1;
 // 13 bits 	 2^(0)Kr^(1)	0.0292969
 // units 2^(0)Kphi^(1)	7.84121e-06
 const ap_int<18> phi2 = ap_int<18>(phi2_input)<<3;

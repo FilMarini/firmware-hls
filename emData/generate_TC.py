@@ -61,7 +61,11 @@ class ProjoutIndexDisk(Enum):
     D4PHIB = 13
     D4PHIC = 14
     D4PHID = 15
-    N_PROJOUT_DISK = 16
+    D5PHIA = 16
+    D5PHIB = 17
+    D5PHIC = 18
+    D5PHID = 19
+    N_PROJOUT_DISK = 20
 
 parser = argparse.ArgumentParser(description="This script generates TrackletCalculatorTop.h, TrackletCalculatorTop.cc, and\
 TrackletCalculator_parameters.h in the TopFunctions/ directory.",
@@ -80,7 +84,8 @@ with open(arguments.wiresFileName, "r") as wiresFile:
     for line in wiresFile:
         # Only barrel-only seeds are supported right now.
         if "TC_L1L2" not in line and "TC_L2L3" not in line \
-          and "TC_L3L4" not in line and "TC_L5L6" not in line:
+          and "TC_L3L4" not in line and "TC_L5L6" not in line\
+          and "TC_L1D1" not in line:
             continue
         line = line.rstrip()
         tcName = re.sub(r".*TC_(.....).*", r"TC_\1", line)
@@ -91,7 +96,7 @@ with open(arguments.wiresFileName, "r") as wiresFile:
                 asInnerMems[tcName] = []
             asInnerMems[tcName].append(memName)
         if ("TC_L2L3" in line and memName.startswith("AS_L3")) or ("TC_L2L3" not in line and \
-          (memName.startswith("AS_L2") or memName.startswith("AS_L4") or memName.startswith("AS_L6"))):
+          (memName.startswith("AS_L2") or memName.startswith("AS_L4") or memName.startswith("AS_L6") or memName.startswith("AS_D1"))):
             if tcName not in asOuterMems:
                 asOuterMems[tcName] = []
             asOuterMems[tcName].append(memName)
