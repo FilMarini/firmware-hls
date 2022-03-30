@@ -11,6 +11,9 @@ luts_url_reduced="https://cernbox.cern.ch/index.php/s/GJZA1zLnWg3hP4y/download"
 # Combined modules
 memprints_url_cm="https://cernbox.cern.ch/index.php/s/YcqX3KUgFdZyMG6/download"
 luts_url_cm="https://cernbox.cern.ch/index.php/s/lKrxzKJ0XmelE0j/download"
+# Reduced Combined modules                                                                                                                     
+memprints_url_reducedcm="https://aryd.web.cern.ch/aryd/MemPrints_CombinedReduced_220309.tgz"
+luts_url_reducedcm="https://aryd.web.cern.ch/aryd/LUTs_CombinedReduced_220309.tgz"
 
 # Function that prints information regarding the usage of this command
 function usage() {
@@ -66,6 +69,10 @@ then
   tar -xzf LUTs.tgz
   mv LUTs LUTsReduced
   rm -f LUTs.tgz
+  wget -O LUTs.tgz --quiet ${luts_url_reducedcm}
+  tar -xzf LUTs.tgz
+  mv LUTs LUTsCMReduced
+  rm -f LUTs.tgz
   wget -O LUTs.tgz --quiet ${luts_url_cm}
   tar -xzf LUTs.tgz
   mv LUTs LUTsCM
@@ -98,6 +105,14 @@ mkdir -p ../TopFunctions/CombinedConfig
 ./generate_VMRCM.py -a -w LUTsCM/wires.dat -o ../TopFunctions/CombinedConfig
 ./generate_TP.py       -w LUTsCM/wires.dat -o ../TopFunctions/CombinedConfig
 ./generate_MP.py       -w LUTsCM/wires.dat -o ../TopFunctions/CombinedConfig
+### reduced combined config                                                                                                                    
+mkdir -p ../TopFunctions/ReducedCombinedConfig
+./generate_IR.py       -w LUTsCMReduced/wires.dat -o ../TopFunctions/ReducedCombinedConfig
+./generate_VMRCM.py -a -w LUTsCMReduced/wires.dat -o ../TopFunctions/ReducedCombinedConfig
+./generate_TP.py       -w LUTsCMReduced/wires.dat -o ../TopFunctions/ReducedCombinedConfig
+./generate_MP.py       -w LUTsCMReduced/wires.dat -o ../TopFunctions/ReducedCombinedConfig
+./generate_TB.py       -w LUTsCMReduced/wires.dat -o ../TopFunctions/ReducedCombinedConfig
+
 
 if [[ $tables_only == 0 ]]
 then
@@ -105,6 +120,11 @@ then
   wget -O MemPrints.tgz --quiet ${memprints_url_reduced}
   tar -xzf MemPrints.tgz
   mv MemPrints MemPrintsReduced
+  rm -f MemPrints.tgz
+
+  wget -O MemPrints.tgz --quiet ${memprints_url_reducedcm}
+  tar -xzf MemPrints.tgz
+  mv MemPrints MemPrintsReducedCM
   rm -f MemPrints.tgz
 
   wget -O MemPrints.tgz --quiet ${memprints_url_cm}
@@ -115,7 +135,6 @@ then
   wget -O MemPrints.tar.gz --quiet ${memprints_url}
   tar -xzf MemPrints.tar.gz
   rm -f MemPrints.tar.gz
-
 fi
 
 # Needed in order for awk to run successfully:
