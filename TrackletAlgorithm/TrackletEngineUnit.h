@@ -73,10 +73,10 @@ if (Seed==TF::L1D1&& iTC==TC::C){
         stubptouterlutnew3_[i] = stubptoutertmp[i+2048];
       }
       for(unsigned int i=0;i<kNBitsPTLutInner;i++) {
-        stubptinnerlutnew3_[i] = stubptinnertmp[i+3072];
+        stubptinnerlutnew4_[i] = stubptinnertmp[i+3072];
       }
       for(unsigned int i=0;i<kNBitsPTLutOuter;i++) {
-        stubptouterlutnew3_[i] = stubptoutertmp[i+3072];
+        stubptouterlutnew4_[i] = stubptoutertmp[i+3072];
       }
     }
 

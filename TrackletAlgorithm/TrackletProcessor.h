@@ -442,7 +442,6 @@ TC::overlapSeeding(const AllStub<InnerRegion> &innerStub, const AllStub<OuterReg
   bool valid_z0=abs(*z0) < ((Seed == TF::L1L2 || Seed == TF::L1D1 || Seed ==TF ::L2D1 ) ? floatToInt(z0cut, kz0) : floatToInt(1.5*z0cut,kz0));
 
   const ap_int<TrackletParameters::kTParPhi0Size + 2> phicrit = *phi0 - (*rinv>>8)*ifactor;
-  std::cout<< " AAAAA: " << floatToInt(1.0, kt) << " " << floatToInt(rinvcut, krinv) << "phicrit min max: " <<phicrit << " " <<phicritmincut << " "<<phicritmaxcut<< "z0cut: "<<floatToInt(1.5*z0cut,kz0)<<std::endl;
   const bool keep = (phicrit > phicritmincut) && (phicrit < phicritmaxcut);
   return valid_rinv && valid_z0 && keep;
 }
