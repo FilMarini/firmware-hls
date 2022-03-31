@@ -14,8 +14,8 @@ class TrackletEngineUnit {
     kNBitsRZBin=3,
     kNBitsRZFine=3,
     kNBitsPhiBins=3,
-    kNBitsPTLutInner=(Seed==TF::L1D1)?4096:((Seed==TF::L5L6)?1024:(Seed==(TF::L1L2||TF::L2L3)?256:512)),
-    kNBitsPTLutOuter=(Seed==TF::L1D1)?4096:((Seed==TF::L5L6)?1024:(Seed==(TF::L1L2||TF::L2L3||TF::L3L4)?256:512))
+    kNBitsPTLutInner=(Seed==TF::L1D1)?1024:((Seed==TF::L5L6)?1024:(Seed==(TF::L1L2||TF::L2L3)?256:512)),
+    kNBitsPTLutOuter=(Seed==TF::L1D1)?1024:((Seed==TF::L5L6)?1024:(Seed==(TF::L1L2||TF::L2L3||TF::L3L4)?256:512))
   };
 
   typedef ap_uint<VMStubTEOuter<VMSTEType>::kVMSTEOIDSize+kNBits_MemAddr+AllStub<innerRegion>::kAllStubSize> STUBID;
@@ -33,6 +33,12 @@ class TrackletEngineUnit {
 
 #pragma HLS ARRAY_PARTITION variable=stubptinnerlutnew_ complete dim=1
 #pragma HLS ARRAY_PARTITION variable=stubptouterlutnew_ complete dim=1
+#pragma HLS ARRAY_PARTITION variable=stubptinnerlutnew2_ complete dim=1
+#pragma HLS ARRAY_PARTITION variable=stubptouterlutnew2_ complete dim=1
+#pragma HLS ARRAY_PARTITION variable=stubptinnerlutnew3_ complete dim=1
+#pragma HLS ARRAY_PARTITION variable=stubptouterlutnew3_ complete dim=1
+#pragma HLS ARRAY_PARTITION variable=stubptinnerlutnew4_ complete dim=1
+#pragma HLS ARRAY_PARTITION variable=stubptouterlutnew4_ complete dim=1
 
 /////  Grabs the appropriate lut based on seed and iTC (need to be included in download.sh)
 if (Seed==TF::L1D1&& iTC==TC::C){
@@ -53,6 +59,24 @@ if (Seed==TF::L1D1&& iTC==TC::C){
       }
       for(unsigned int i=0;i<kNBitsPTLutOuter;i++) {
         stubptouterlutnew_[i] = stubptoutertmp[i];
+      }
+      for(unsigned int i=0;i<kNBitsPTLutInner;i++) {
+        stubptinnerlutnew2_[i] = stubptinnertmp[i+1024];
+      }
+      for(unsigned int i=0;i<kNBitsPTLutOuter;i++) {
+        stubptouterlutnew2_[i] = stubptoutertmp[i+1024];
+      }
+      for(unsigned int i=0;i<kNBitsPTLutInner;i++) {
+        stubptinnerlutnew3_[i] = stubptinnertmp[i+2048];
+      }
+      for(unsigned int i=0;i<kNBitsPTLutOuter;i++) {
+        stubptouterlutnew3_[i] = stubptoutertmp[i+2048];
+      }
+      for(unsigned int i=0;i<kNBitsPTLutInner;i++) {
+        stubptinnerlutnew3_[i] = stubptinnertmp[i+3072];
+      }
+      for(unsigned int i=0;i<kNBitsPTLutOuter;i++) {
+        stubptouterlutnew3_[i] = stubptoutertmp[i+3072];
       }
     }
 
@@ -646,6 +670,12 @@ void write(STUBID stubs) {
 
  ap_uint<1> stubptinnerlutnew_[kNBitsPTLutInner];    
  ap_uint<1> stubptouterlutnew_[kNBitsPTLutOuter];
+ ap_uint<1> stubptinnerlutnew2_[kNBitsPTLutInner];    
+ ap_uint<1> stubptouterlutnew2_[kNBitsPTLutOuter];
+ ap_uint<1> stubptinnerlutnew3_[kNBitsPTLutInner];    
+ ap_uint<1> stubptouterlutnew3_[kNBitsPTLutOuter];
+ ap_uint<1> stubptinnerlutnew4_[kNBitsPTLutInner];    
+ ap_uint<1> stubptouterlutnew4_[kNBitsPTLutOuter];
 
 
  private:

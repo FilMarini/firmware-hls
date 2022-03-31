@@ -431,23 +431,19 @@ TC::overlapSeeding(const AllStub<InnerRegion> &innerStub, const AllStub<OuterReg
 #pragma HLS unroll
     bool valid_t=abs(*t)>floatToInt(1.0, kt);
     bool valid_phimin=phiD[i]>0;
-    bool valid_phimax=phiD[i]<(1 << TrackletProjection<BARRELPS>::kTProjPhiSize) - 1;
+    bool valid_phimax=phiD[i]<(1 << TrackletProjection<DISK>::kTProjPhiSize) - 1;
     bool valid_r=rD[i] >= 342 && rD[i] < 2048;
-    valid_proj_disk[i] = valid_t && valid_phimin && valid_phimax && valid_r;
-    if (i==0){
-    std::cout<<"i valid_proj_disk: "<<i<< " " << valid_proj_disk[i]<<std::endl;}
-
-  }
-
+    valid_proj_disk[i] = valid_t && valid_phimin && valid_phimax && valid_r;}
+  //std::cout<< "rinv phi0 z0 t: "<<*rinv<<" "<<*phi0<<" "<<*t<<" "<<*z0<<std::endl;
+  std::cout<< "rinv phi0 z0 t"<< *rinv << " " << *phi0<< " " << *z0 << " " <<*t <<std::endl;//FIXME
 // Reject tracklets with too high a curvature or with too large a longitudinal
 // impact parameter.
-
   bool valid_rinv=abs(*rinv) < floatToInt(rinvcut, krinv);
   bool valid_z0=abs(*z0) < ((Seed == TF::L1L2 || Seed == TF::L1D1 || Seed ==TF ::L2D1 ) ? floatToInt(z0cut, kz0) : floatToInt(1.5*z0cut,kz0));
 
   const ap_int<TrackletParameters::kTParPhi0Size + 2> phicrit = *phi0 - (*rinv>>8)*ifactor;
+  std::cout<< " AAAAA: " << floatToInt(1.0, kt) << " " << floatToInt(rinvcut, krinv) << "phicrit min max: " <<phicrit << " " <<phicritmincut << " "<<phicritmaxcut<< "z0cut: "<<floatToInt(1.5*z0cut,kz0)<<std::endl;
   const bool keep = (phicrit > phicritmincut) && (phicrit < phicritmaxcut);
-
   return valid_rinv && valid_z0 && keep;
 }
 
@@ -477,11 +473,8 @@ TC::addProj(const TrackletProjection<TProjType> &proj, const BXType bx, Tracklet
   }
   TC::Types::phiL phi = proj.getPhi() >> (TrackletProjection<TProjType>::kTProjPhiSize - 5);
   
-// Fill correct TrackletProjectionMemory according to phi bin of projection.
-  if (TProjType == BARRELPS && NProjOut == nproj_L1)
-    phi >>= 2;
-  else
-    phi >>= 3;
+// Fill correct TrackletProjectionMemory according to phi bin of projection. 
+  phi >>= 3;
 
   if (NProjOut > 0 && TPROJMask & (0x1 << 0) && success && proj_success && phi == 0)
     projout[0].write_mem(bx, proj, nproj[0]++);
@@ -546,12 +539,19 @@ TC::processStubPair(
 
 
 // Calculate the tracklet parameters and projections.
+  auto stubIndex1 =  innerIndex;
+  auto stubIndex2 =  outerIndex;
+
   if (Seed == TF::L1L2 || Seed == TF::L2L3 || Seed == TF::L3L4 || Seed == TF::L5L6)
     success = TC::barrelSeeding<Seed, InnerRegion, OuterRegion>(innerStub, outerStub, &rinv, &phi0, &z0, &t, phiL, zL, &der_phiL, &der_zL, valid_proj, phiD, rD, &der_phiD, &der_rD, valid_proj_disk);
-  if (Seed == TF::L1D1)
+  if (Seed == TF::L1D1){
     success = TC::overlapSeeding<Seed, InnerRegion, OuterRegion>(innerStub, outerStub, &rinv, &phi0, &z0, &t, phiL, zL, &der_phiL, &der_zL, valid_proj, phiD, rD, &der_phiD, &der_rD, valid_proj_disk);
+    stubIndex1 = outerIndex;
+    stubIndex2 = innerIndex;}
+   //stub indices are reversed on overlap seeds for some reason.
 // Write the tracklet parameters and projections to the output memories.
-  const TrackletParameters tpar(innerIndex, outerIndex, rinv, phi0, z0, t);
+  
+  const TrackletParameters tpar(stubIndex1,stubIndex2, rinv, phi0, z0, t);//FIXME
   if (success) trackletParameters->write_mem(bx, tpar, npar++);
 
   //return; //ryd
@@ -856,9 +856,45 @@ TrackletProcessor(
       
       auto ptinnerindex = (idphitmp, innerbend);
       auto ptouterindex = (idphitmp, outerbend);
-      ap_uint<1> lutinner = teunits[k].stubptinnerlutnew_[ptinnerindex];
-      ap_uint<1> lutouter = teunits[k].stubptouterlutnew_[ptouterindex];
-      
+
+      ap_uint<1> lutinner;
+      ap_uint<1> lutouter;      
+      if (Seed == TF::L1D1){
+      auto ptinnerfirst = ptinnerindex>>10;
+      auto ptouterfirst = ptouterindex>>10;
+      auto ptinnerlast = ptinnerindex%1024;
+      auto ptouterlast = ptouterindex%1024;
+        switch(ptinnerfirst){
+          case 0:
+            lutinner = teunits[k].stubptinnerlutnew_[ptinnerlast];
+            break;
+          case 1:
+            lutinner = teunits[k].stubptinnerlutnew2_[ptinnerlast];
+            break;
+          case 2:
+            lutinner = teunits[k].stubptinnerlutnew3_[ptinnerlast];
+            break;
+          case 3:
+            lutinner = teunits[k].stubptinnerlutnew4_[ptinnerlast];
+            break;}
+        switch(ptouterfirst){
+          case 0:
+            lutouter = teunits[k].stubptouterlutnew_[ptouterlast];
+            break;
+          case 1:
+            lutouter = teunits[k].stubptouterlutnew2_[ptouterlast];
+            break;
+          case 2:
+            lutouter = teunits[k].stubptouterlutnew3_[ptouterlast];
+            break;
+          case 3:
+            lutouter = teunits[k].stubptouterlutnew4_[ptouterlast];
+            break;}
+      }
+      else{
+      lutinner = teunits[k].stubptinnerlutnew_[ptinnerindex];
+      lutouter = teunits[k].stubptouterlutnew_[ptouterindex];
+      }
       ap_uint<1> savestub = teunits[k].good___ && inrange && lutinner && lutouter && rzcut;
       //std::cout<<" teunits[k].good: "<<teunits[k].good___<<" savestub: "<<savestub<<" inrange: "<<inrange<<" lutinner:  "<<lutinner<<" lutouter: "<<lutouter<<" rzcut: "<<rzcut<<std::endl;
       teunits[k].stubids_[teuwriteindex[k]] = (teunits[k].outervmstub___.getIndex(), 

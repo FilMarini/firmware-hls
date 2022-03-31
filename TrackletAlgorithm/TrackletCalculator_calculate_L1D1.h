@@ -74,28 +74,29 @@ const ap_int<16> dphi = phi2 - phi1;
 const ap_int<11> dr = r2 - r1abs;
 //
 // STEP 3
+
+bool negZ = z2mean_input<0;
+std::cout<<"negz: "<<negZ<<std::endl;
+
 ap_int<18> drinv;
 const ap_uint<11> addr_drinv = dr & 2047; // address for the LUT
-switch(z2mean_input>0){
-case(1):{
-  static const ap_int<18> LUT_drinv[2048] = {
-#if __has_include("../emData/TC/tables/TC_L1F1_drinv.tab")
-#  include "../emData/TC/tables/TC_L1F1_drinv.tab"
-#endif
-  };
-  drinv = LUT_drinv[addr_drinv];
-  break;
-}
-case(0):{
+if (negZ){
   static const ap_int<18> LUT_drinv[2048] = {
 #if __has_include("../emData/TC/tables/TC_L1B1_drinv.tab")
 #  include "../emData/TC/tables/TC_L1B1_drinv.tab"
 #endif
   };
   drinv = LUT_drinv[addr_drinv];
-  break;
 }
+else{
+  static const ap_int<18> LUT_drinv[2048] = {
+#if __has_include("../emData/TC/tables/TC_L1F1_drinv.tab")
+#  include "../emData/TC/tables/TC_L1F1_drinv.tab"
+#endif
+  };
+  drinv = LUT_drinv[addr_drinv];
 }
+
 //
 // STEP 4
 
@@ -958,26 +959,23 @@ const ap_int<18> x7 = x7_tmp >> 16;
 const ap_uint<11> addr_invt = (t_final>>1) & 2047; // address for the LUT
 ap_int<18> invt;
 
-switch (z2mean_input > 0){
-case(1):{
-  static const ap_int<18> LUT_invt[2048] = {
-#if __has_include("../emData/TC/tables/TC_L1F1_invt.tab")
-#  include "../emData/TC/tables/TC_L1F1_invt.tab"
-#endif
-
-  };
-  invt = LUT_invt[addr_invt];
-  break;
-}
-case(0):{
+if (negZ){
   static const ap_int<18> LUT_invt[2048] = {
 #if __has_include("../emData/TC/tables/TC_L1B1_invt.tab")
 #  include "../emData/TC/tables/TC_L1B1_invt.tab"
 #endif
+
   };
   invt = LUT_invt[addr_invt];
-  break;
-}}
+}
+else{
+  static const ap_int<18> LUT_invt[2048] = {
+#if __has_include("../emData/TC/tables/TC_L1F1_invt.tab")
+#  include "../emData/TC/tables/TC_L1F1_invt.tab"
+#endif
+  };
+  invt = LUT_invt[addr_invt];
+}
 //
 // STEP 12
 
