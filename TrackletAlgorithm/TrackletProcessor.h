@@ -741,7 +741,7 @@ TrackletProcessor(
 #pragma HLS pipeline II=1
 
     
-    /*
+    
     std::cout << "istep="<<istep<<" TEBuffer: "<<tebuffer.getIStub()<<" "<<tebuffer.getMem()<<" "
               << tebuffer.readptr()<<" "<<tebuffer.writeptr()<<std::endl;
     
@@ -749,7 +749,7 @@ TrackletProcessor(
       std::cout<<" ["<<k<<" "<<teunits[k].readindex_<<" "<<teunits[k].writeindex_<<" "<<teunits[k].idle_<<"]";
     }
     std::cout << std::endl;
-    */
+    
    
 
     //
@@ -1013,7 +1013,7 @@ TrackletProcessor(
     //havestubs means that at least one memory bin has stubs
     //goodstub means that we had a valid inner stub
     ap_uint<1> addtedata=valid&&havestubs&&goodstub___;
-    
+    std::cout<<"valid havestubs goodstub: "<<valid<<" "<<havestubs<<" " <<goodstub___<<std::endl;
     //Create TEData and save in buffer - but only increment point if data good
     TEData<Seed,iTC,InnerRegion,OuterRegion> tedatatmp(stubmask, rzfinebinfirst,start, rzdiffmax,stub___.raw());
     tebuffer.buffer_[tebuffer.writeptr_] = tedatatmp.raw();
