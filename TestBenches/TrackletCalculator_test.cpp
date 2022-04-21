@@ -22,7 +22,7 @@
   #define TOP_FUNC_ TrackletCalculator_L1L2E
 #endif
 
-const int nevents = 100;  //number of events to run
+const int nevents = 1;  //number of events to run
 
 using namespace std;
 

@@ -182,6 +182,8 @@ with open(os.path.join(dirname, arguments.outputDirectory, "TrackletCalculator_p
             outerPart = re.sub(r".*_(..PHI.).*_(..PHI.).*", r"\2", spMems[tcName][i])
             innerIndex = -1
             outerIndex = -1
+            if tcName == "TC_L1D1C":
+              print(innerPart,outerPart)
 
             # for L2L3, the letters in the AS names are shifted relative to
             # those in the SP names
@@ -189,15 +191,35 @@ with open(os.path.join(dirname, arguments.outputDirectory, "TrackletCalculator_p
             innerPart = re.sub(r"PHIJ", r"PHIB", innerPart)
             innerPart = re.sub(r"PHIK", r"PHIC", innerPart)
             innerPart = re.sub(r"PHIL", r"PHID", innerPart)
+            innerPart = re.sub(r"PHIQ", r"PHIE", innerPart)
+            innerPart = re.sub(r"PHIR", r"PHIF", innerPart)
+            innerPart = re.sub(r"PHIS", r"PHIG", innerPart)
+            innerPart = re.sub(r"PHIT", r"PHIH", innerPart)
+            innerPart = re.sub(r"PHIW", r"PHID", innerPart)
+            innerPart = re.sub(r"PHIX", r"PHIA", innerPart)
+            innerPart = re.sub(r"PHIY", r"PHIB", innerPart)
+            innerPart = re.sub(r"PHIZ", r"PHIC", innerPart)
+
             outerPart = re.sub(r"PHII", r"PHIA", outerPart)
             outerPart = re.sub(r"PHIJ", r"PHIB", outerPart)
             outerPart = re.sub(r"PHIK", r"PHIC", outerPart)
             outerPart = re.sub(r"PHIL", r"PHID", outerPart)
 
+
+            outerPart = re.sub(r"PHIQ", r"PHIE", outerPart)
+            outerPart = re.sub(r"PHIR", r"PHIF", outerPart)
+            outerPart = re.sub(r"PHIS", r"PHIG", outerPart)
+            outerPart = re.sub(r"PHIT", r"PHIH", outerPart)
+            outerPart = re.sub(r"PHIW", r"PHID", outerPart)
+            outerPart = re.sub(r"PHIX", r"PHIA", outerPart)
+            outerPart = re.sub(r"PHIY", r"PHIB", outerPart)
+            outerPart = re.sub(r"PHIZ", r"PHIC", outerPart)
             for j in range(0, nASMemInner):
                 if innerPart in asInnerMems[tcName][j]:
                     innerIndex = j
                     break
+            if tcName == "TC_L1D1C":
+              print(innerPart,outerPart)
             asInnerMask = asInnerMask | (innerIndex << (2 * i))
             for j in range(0, nASMemOuter):
                 if outerPart in asOuterMems[tcName][j]:
