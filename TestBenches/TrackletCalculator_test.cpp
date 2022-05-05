@@ -22,7 +22,7 @@
   #define TOP_FUNC_ TrackletCalculator_L1L2E
 #endif
 
-const int nevents = 1;  //number of events to run
+const int nevents = 2;  //number of events to run
 
 using namespace std;
 
@@ -54,6 +54,21 @@ int main()
   const auto OuterStubType = DISKPS;
   const string innerStubPattern = "AllStubs*_L1*";
   const string outerStubPattern = "AllStubs*_D1*";
+#elif SEED_ == L2D1_
+  const auto InnerStubType = BARRELPS;
+  const auto OuterStubType = DISKPS;
+  const string innerStubPattern = "AllStubs*_L2*";
+  const string outerStubPattern = "AllStubs*_D1*";
+#elif SEED_ == D1D2_
+  const auto InnerStubType = DISKPS;
+  const auto OuterStubType = DISKPS;
+  const string innerStubPattern = "AllStubs*_D1*";
+  const string outerStubPattern = "AllStubs*_D2*";
+#elif SEED_ == D3D4_
+  const auto InnerStubType = DISKPS;
+  const auto OuterStubType = DISKPS;
+  const string innerStubPattern = "AllStubs*_D3*";
+  const string outerStubPattern = "AllStubs*_D4*";
 #else
   #error "Undefined seed"
 #endif

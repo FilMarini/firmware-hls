@@ -144,7 +144,39 @@ declare -a processing_modules=(
   "TC_L5L6B"
   "TC_L5L6C"
   "TC_L5L6D"
+  "TC_L1D1A"
+  "TC_L1D1B"
   "TC_L1D1C"
+  "TC_L1D1D"
+  "TC_L1D1E"
+  "TC_L1D1F"
+  "TC_L1D1G"
+  "TC_L1D1H"
+  "TC_L1D1I"
+  "TC_L1D1J"
+  "TC_L1D1K"
+  "TC_L1D1L"
+  "TC_L2D1A"
+  "TC_L2D1B"
+  "TC_L2D1C"
+  "TC_L2D1D"
+  "TC_D1D2A"
+  "TC_D1D2B"
+  "TC_D1D2C"
+  "TC_D1D2D"
+  "TC_D3D4A"
+  "TC_D3D4B"
+  "TC_D3D4C"
+  "TC_D3D4D"
+  "TC_B1B2D"
+  "TC_F1F2D"
+  "TC_B3B4D"
+  "TC_F3F4D"
+  "TC_L1B1D"
+  "TC_L1F1D"
+  "TC_L2B1D"
+  "TC_L2F1D"
+
   # ProjectionRouter
   "PR_L1PHIA"
   "PR_L1PHIB"
@@ -288,6 +320,18 @@ declare -a processing_modules=(
   "TP_L1D1J"
   "TP_L1D1K"
   "TP_L1D1L"
+  "TP_L2D1A"
+  "TP_L2D1B"
+  "TP_L2D1C"
+  "TP_L2D1D"
+  "TP_D1D2A"
+  "TP_D1D2B"
+  "TP_D1D2C"
+  "TP_D1D2D"
+  "TP_D3D4A"
+  "TP_D3D4B"
+  "TP_D3D4C"
+  "TP_D3D4D"
 )
 
 # Function that prints information regarding the usage of this command
@@ -452,7 +496,7 @@ do
           find ${table_location} -type f -name "METable_${layer}.tab" -exec ln -sf ../../{} ${table_target_dir}/ \;
   elif [[ ${module_type} == "TP" ]]
   then
-          seed=`echo ${module} | sed "s/.*_\(L[1-6][L|D][1-6]\).*$/\1/g"`
+          seed=`echo ${module} | sed "s/.*_\([L|D][1-6][L|D][1-6]\).*$/\1/g"`
           find ${table_location} -type f -name "TP_${seed}.tab" -exec ln -sf ../../{} ${table_target_dir}/ \;
           find ${table_location} -type f -name "${module}_*.tab" -exec ln -sf ../../{} ${table_target_dir}/ \;
   elif [[ ${module_type} == "MC" ]] || [[ ${module_type} == "TE" ]]

@@ -85,6 +85,31 @@ int main()
   const string innerStubPattern = "AllInnerStubs*_L1*";
   const string outerStubPattern = "AllStubs*_D1*";
   const int NTEUnits=3;
+#elif SEED_ == L2D1_
+  ap_uint<10> innervmtable[2048] =
+#include "../emData/TP/tables/TP_L2D1.tab"
+  const auto InnerStubType = BARRELPS;
+  const auto OuterStubType = DISKPS;
+  const string innerStubPattern = "AllInnerStubs*_L2*";
+  const string outerStubPattern = "AllStubs*_D1*";
+  const int NTEUnits=2;
+#elif SEED_ == D1D2_
+  ap_uint<10> innervmtable[2048] =
+#include "../emData/TP/tables/TP_D1D2.tab"
+  const auto InnerStubType = BARRELPS;
+  const auto OuterStubType = DISKPS;
+  const string innerStubPattern = "AllInnerStubs*_D1*";
+  const string outerStubPattern = "AllStubs*_D2*";
+  const int NTEUnits=3;
+#elif SEED_ == D3D4_
+  ap_uint<10> innervmtable[2048] =
+#include "../emData/TP/tables/TP_D3D4tab"
+  const auto InnerStubType = BARRELPS;
+  const auto OuterStubType = DISKPS;
+  const string innerStubPattern = "AllInnerStubs*_D3*";
+  const string outerStubPattern = "AllStubs*_D4*";
+  const int NTEUnits=2;
+
 #else
   #error "Undefined seed"
 #endif
@@ -196,6 +221,66 @@ std::cout<<module_name[MODULE_];
 #elif (SEED_==L1D1_) and (ITC_ == D_)
   ap_uint<8> useregion[] =
 #include "../emData/TP/tables/TP_L1D1D_usereg.tab"
+#elif (SEED_==L1D1_) and (ITC_ == E_)
+  ap_uint<8> useregion[] =
+#include "../emData/TP/tables/TP_L1D1E_usereg.tab"
+#elif (SEED_==L1D1_) and (ITC_ == F_)
+  ap_uint<8> useregion[] =
+#include "../emData/TP/tables/TP_L1D1F_usereg.tab"
+#elif (SEED_==L1D1_) and (ITC_ == G_)
+  ap_uint<8> useregion[] =
+#include "../emData/TP/tables/TP_L1D1G_usereg.tab"
+#elif (SEED_==L1D1_) and (ITC_ == H_)
+  ap_uint<8> useregion[] =
+#include "../emData/TP/tables/TP_L1D1H_usereg.tab"
+#elif (SEED_==L1D1_) and (ITC_ == I_)
+  ap_uint<8> useregion[] =
+#include "../emData/TP/tables/TP_L1D1I_usereg.tab"
+#elif (SEED_==L1D1_) and (ITC_ == J_)
+  ap_uint<8> useregion[] =
+#include "../emData/TP/tables/TP_L1D1J_usereg.tab"
+#elif (SEED_==L1D1_) and (ITC_ == K_)
+  ap_uint<8> useregion[] =
+#include "../emData/TP/tables/TP_L1D1K_usereg.tab"
+#elif (SEED_==L1D1_) and (ITC_ == L_)
+  ap_uint<8> useregion[] =
+#include "../emData/TP/tables/TP_L1D1L_usereg.tab"
+#elif (SEED_==L2D1_) and (ITC_ == A_)
+  ap_uint<8> useregion[] =
+#include "../emData/TP/tables/TP_L2D1A_usereg.tab"
+#elif (SEED_==L2D1_) and (ITC_ == B_)
+  ap_uint<8> useregion[] =
+#include "../emData/TP/tables/TP_L2D1B_usereg.tab"
+#elif (SEED_==L2D1_) and (ITC_ == C_)
+  ap_uint<8> useregion[] =
+#include "../emData/TP/tables/TP_L2D1C_usereg.tab"
+#elif (SEED_==L2D1_) and (ITC_ == D_)
+  ap_uint<8> useregion[] =
+#include "../emData/TP/tables/TP_L2D1D_usereg.tab"
+#elif (SEED_==D1D2_) and (ITC_ == A_)
+  ap_uint<8> useregion[] =
+#include "../emData/TP/tables/TP_D1D2A_usereg.tab"
+#elif (SEED_==D1D2_) and (ITC_ == B_)
+  ap_uint<8> useregion[] =
+#include "../emData/TP/tables/TP_D1D2B_usereg.tab"
+#elif (SEED_==D1D2_) and (ITC_ == C_)
+  ap_uint<8> useregion[] =
+#include "../emData/TP/tables/TP_D1D2C_usereg.tab"
+#elif (SEED_==D1D2_) and (ITC_ == D_)
+  ap_uint<8> useregion[] =
+#include "../emData/TP/tables/TP_D1D2D_usereg.tab"
+#elif (SEED_==D3D4_) and (ITC_ == A_)
+  ap_uint<8> useregion[] =
+#include "../emData/TP/tables/TP_D3D4A_usereg.tab"
+#elif (SEED_==D3D4_) and (ITC_ == B_)
+  ap_uint<8> useregion[] =
+#include "../emData/TP/tables/TP_D3D4B_usereg.tab"
+#elif (SEED_==D3D4_) and (ITC_ == C_)
+  ap_uint<8> useregion[] =
+#include "../emData/TP/tables/TP_D3D4C_usereg.tab"
+#elif (SEED_==D3D4_) and (ITC_ == D_)
+  ap_uint<8> useregion[] =
+#include "../emData/TP/tables/TP_D3D4D_usereg.tab"
 
 #endif
 //

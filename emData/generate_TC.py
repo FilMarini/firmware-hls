@@ -85,18 +85,22 @@ with open(arguments.wiresFileName, "r") as wiresFile:
         # Only barrel-only seeds are supported right now.
         if "TC_L1L2" not in line and "TC_L2L3" not in line \
           and "TC_L3L4" not in line and "TC_L5L6" not in line\
-          and "TC_L1D1" not in line:
+          and "TC_L1D1" not in line and "TC_L2D1" not in line\
+          and "TC_D1D2" not in line and "TC_D3D4" not in line:
             continue
         line = line.rstrip()
         tcName = re.sub(r".*TC_(.....).*", r"TC_\1", line)
         memName = line.split()[0]
-        if ("TC_L2L3" in line and memName.startswith("AS_L2")) or ("TC_L2L3" not in line and \
-          (memName.startswith("AS_L1") or memName.startswith("AS_L3") or memName.startswith("AS_L5"))):
+        if ("TC_L2L3" in line and memName.startswith("AS_L2")) or ("TC_L2D1" in line and memName.startswith("AS_L2")) or ("TC_L2L3" not in line and \
+          (memName.startswith("AS_L1") or memName.startswith("AS_L3") or memName.startswith("AS_L5")) or \
+           (("TC_L1D1" not in line and "TC_L2D1" not in line) and memName.startswith("AS_D1")) or memName.startswith("AS_D3") ):
             if tcName not in asInnerMems:
                 asInnerMems[tcName] = []
             asInnerMems[tcName].append(memName)
         if ("TC_L2L3" in line and memName.startswith("AS_L3")) or ("TC_L2L3" not in line and \
-          (memName.startswith("AS_L2") or memName.startswith("AS_L4") or memName.startswith("AS_L6") or memName.startswith("AS_D1"))):
+          (memName.startswith("AS_L2") or memName.startswith("AS_L4") or memName.startswith("AS_L6") or \
+           memName.startswith("AS_D4") or memName.startswith("AS_D2")) or \
+           (("TC_L2D1" in line or "TC_L1D1" in line) and memName.startswith("AS_D1"))):
             if tcName not in asOuterMems:
                 asOuterMems[tcName] = []
             asOuterMems[tcName].append(memName)
@@ -182,9 +186,8 @@ with open(os.path.join(dirname, arguments.outputDirectory, "TrackletCalculator_p
             outerPart = re.sub(r".*_(..PHI.).*_(..PHI.).*", r"\2", spMems[tcName][i])
             innerIndex = -1
             outerIndex = -1
-            if tcName == "TC_L1D1C":
-              print(innerPart,outerPart)
-
+            if seed == "D3D4" and iTC == "C":
+              print (innerPart,outerPart)
             # for L2L3, the letters in the AS names are shifted relative to
             # those in the SP names
             innerPart = re.sub(r"PHII", r"PHIA", innerPart)
@@ -218,8 +221,6 @@ with open(os.path.join(dirname, arguments.outputDirectory, "TrackletCalculator_p
                 if innerPart in asInnerMems[tcName][j]:
                     innerIndex = j
                     break
-            if tcName == "TC_L1D1C":
-              print(innerPart,outerPart)
             asInnerMask = asInnerMask | (innerIndex << (2 * i))
             for j in range(0, nASMemOuter):
                 if outerPart in asOuterMems[tcName][j]:

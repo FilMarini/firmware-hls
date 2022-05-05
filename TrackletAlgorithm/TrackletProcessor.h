@@ -126,7 +126,7 @@ namespace TC {
     Types::der_rD * const der_rD_output
   );
   template<TF::seed Seed, regionType InnerRegion, regionType OuterRegion>
-  void calculate_L1D1 (
+  void calculate_LXD1 (
     const typename AllStub<InnerRegion>::ASR r1_input,
     const typename AllStub<InnerRegion>::ASPHI phi1_input,
     const typename AllStub<InnerRegion>::ASZ z1_input,
@@ -365,10 +365,10 @@ TC::barrelSeeding(const AllStub<InnerRegion> &innerStub, const AllStub<OuterRegi
 //FIXME WIP
 //////////////////////////////////////
 
-#include "TrackletCalculator_calculate_L1D1.h"
+#include "TrackletCalculator_calculate_LXD1.h"
 
-// This function calls calculate_L1D1, defined in
-// TrackletCalculator_calculate_L1D1.h, and applies cuts to the results.
+// This function calls calculate_LXD1, defined in
+// TrackletCalculator_calculate_LXD1.h, and applies cuts to the results.
 template<TF::seed Seed, regionType InnerRegion, regionType OuterRegion> bool
 TC::overlapSeeding(const AllStub<InnerRegion> &innerStub, const AllStub<OuterRegion> &outerStub, TC::Types
 ::rinv * const rinv, TrackletParameters::PHI0PAR * const phi0, TC::Types::z0 * const z0, TrackletParameters::TPAR * const t, TC::Types::phiL phiL[4], TC::Types::zL zL[4], TC::Types::der_phiL * const der_phiL, TC::Types::der_zL * const der_zL, TC::Types::flag valid_proj[4], TC::Types::phiD phiD[4], TC::Types::rD rD[4], TC::Types::der_phiD * const der_phiD, TC::Types::der_rD * const der_rD, TC::Types::flag valid_proj_disk[4])
@@ -382,7 +382,7 @@ TC::overlapSeeding(const AllStub<InnerRegion> &innerStub, const AllStub<OuterReg
   //std::cout<<"negz:"<<negZ;
   TC::Types::zmean z2mean = negZ*zmean[TF::D1];
   TC::Types::zmean zproj[4] = {zmean[TF::D2], zmean[TF::D3],  zmean[TF::D4],zmean[TF::D5]};
-  calculate_L1D1<Seed, InnerRegion, OuterRegion>(
+  calculate_LXD1<Seed, InnerRegion, OuterRegion>(
       innerStub.getR(),
       innerStub.getPhi(),
       innerStub.getZ(),
@@ -547,6 +547,7 @@ TC::processStubPair(
     success = TC::overlapSeeding<Seed, InnerRegion, OuterRegion>(innerStub, outerStub, &rinv, &phi0, &z0, &t, phiL, zL, &der_phiL, &der_zL, valid_proj, phiD, rD, &der_phiD, &der_rD, valid_proj_disk);
     stubIndex1 = outerIndex;
     stubIndex2 = innerIndex;}
+  std::cout<<std::hex<<"INDEX: "<<(stubIndex1,stubIndex2)<< std::dec<<std::endl;
    //stub indices are reversed on overlap seeds for some reason.
 // Write the tracklet parameters and projections to the output memories.
   
@@ -676,7 +677,7 @@ TrackletProcessor(
 
 )
 {
-  static_assert(Seed == TF::L1L2||Seed==TF::L2L3||Seed==TF::L3L4||Seed==TF::L5L6||Seed==TF::L1D1, "Only Barrel and Overlap(L1D1) seeds have been implemented so far.");
+  //static_assert(Seed == TF::L1L2||Seed==TF::L2L3||Seed==TF::L3L4||Seed==TF::L5L6||Seed==TF::L1D1, "Only Barrel and Overlap(L1D1) seeds have been implemented so far.");
 
   int npar = 0;
   int nproj_barrel_ps[TC::N_PROJOUT_BARRELPS] = {0};
@@ -741,7 +742,7 @@ TrackletProcessor(
 #pragma HLS pipeline II=1
 
     
-    
+    /*
     std::cout << "istep="<<istep<<" TEBuffer: "<<tebuffer.getIStub()<<" "<<tebuffer.getMem()<<" "
               << tebuffer.readptr()<<" "<<tebuffer.writeptr()<<std::endl;
     
@@ -749,7 +750,7 @@ TrackletProcessor(
       std::cout<<" ["<<k<<" "<<teunits[k].readindex_<<" "<<teunits[k].writeindex_<<" "<<teunits[k].idle_<<"]";
     }
     std::cout << std::endl;
-    
+    */
    
 
     //
@@ -829,7 +830,7 @@ TrackletProcessor(
 
       const typename VMStubTEOuter<OuterRegion>::VMSTEOFINEPHI& finephi = teunits[k].outervmstub___.getFinePhi();
       const ap_uint<1+VMStubTEOuterBase<OuterRegion>::kVMSTEOFineZSize>& rzbin = (teunits[k].next___, teunits[k].outervmstub___.getFineZ()); 
-
+      std::cout<<"FINEZ: "<<teunits[k].outervmstub___.getFineZ();
       ap_uint<NBitsPhiRegion> iAllstub=OuterPhiRegion;
       ap_uint<NfinephiBits> outerfinephi = (iAllstub, teunits[k].ireg___, finephi);
       

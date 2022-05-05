@@ -104,21 +104,26 @@ with open(arguments.wiresFileName, "r") as wiresFile:
         and "TP_L2L3" not in line \
         and "TP_L3L4" not in line \
         and "TP_L5L6" not in line \
-        and "TP_L1D1" not in line:
-          continue      
-   
+        and "TP_L2D1" not in line \
+        and "TP_L1D1" not in line \
+        and "TP_D1D2" not in line \
+        and "TP_D3D4" not in line:
+          continue
       line = line.rstrip()
       tpName = re.sub(r".*TP_(.....).*", r"TP_\1", line)
-      
+
       if "TP_L1D1" in line or "TP_L1L2" in line or "TP_L2L3" in line or "TP_L3L4" in line:
         innerType[tpName] = "BARRELPS"
       else:
-        innerType[tpName] = "BARREL2S"
+        if "TP_L1D1" in line or "TP_L2D1" in line or "TP_D1D2" in line or "TP_D3D4" in line:
+          innerType[tpName] = "DISKPS"
+        else:
+          innerType[tpName] = "BARREL2S"
 
       if "TP_L1L2" in line or "TP_L2L3" in line:
         outerType[tpName] = "BARRELPS"
       else:
-        if "TP_L1D1" in line:
+        if "TP_L1D1" in line or "TP_L2D1" in line or "TP_D1D2" in line or "TP_D3D4" in line:
           outerType[tpName] = "DISKPS"
         else:
           outerType[tpName] = "BARREL2S"
@@ -127,7 +132,7 @@ with open(arguments.wiresFileName, "r") as wiresFile:
       else:
         vmsteType[tpName]=outerType[tpName]
       memName = line.split()[0]
-  
+
       if "TP_L2L3" in line:
           if memName.startswith("AS_L2"):
               if tpName not in asInnerMems:
@@ -137,12 +142,21 @@ with open(arguments.wiresFileName, "r") as wiresFile:
               if tpName not in asOuterMems:
                   asOuterMems[tpName] = []
               asOuterMems[tpName].append(memName)
-      else:
-          if memName.startswith("AS_L1") or memName.startswith("AS_L3") or memName.startswith("AS_L5"):
+      elif "TP_L1D1" in line or "TP_L2D1" in line:
+          if memName.startswith("AS_L1") or memName.startswith("AS_L2"):
               if tpName not in asInnerMems:
                   asInnerMems[tpName] = []
               asInnerMems[tpName].append(memName)
-          if memName.startswith("AS_L2") or memName.startswith("AS_D1") or memName.startswith("AS_L4") or memName.startswith("AS_L6"):
+          if memName.startswith("AS_D1"):
+              if tpName not in asOuterMems:
+                  asOuterMems[tpName] = []
+              asOuterMems[tpName].append(memName)
+      else:
+          if memName.startswith("AS_L1") or memName.startswith("AS_L3") or memName.startswith("AS_L5") or memName.startswith("AS_D1") or memName.startswith("AS_D3"):
+              if tpName not in asInnerMems:
+                  asInnerMems[tpName] = []
+              asInnerMems[tpName].append(memName)
+          if memName.startswith("AS_L2") or memName.startswith("AS_D2") or memName.startswith("AS_D4") or memName.startswith("AS_L4") or memName.startswith("AS_L6"):
               if tpName not in asOuterMems:
                   asOuterMems[tpName] = []
               asOuterMems[tpName].append(memName)
