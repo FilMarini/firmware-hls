@@ -25,6 +25,8 @@ using namespace std;
 
 int main()
 {
+  const string sectorSuffix = "_04.dat"; //  Specifies the sector
+
   // Define memory patterns
   const string candidateMatchPattern = "CandidateMatches*";
   const string allProjectionPatternarray = "AllProj*";
@@ -34,34 +36,34 @@ int main()
   const auto stubMemType = (MODULE_ >= MC_L1PHIA_ && MODULE_ <= MC_L3PHID_) ? BARRELPS : (MODULE_ > MC_D5PHID_) ? BARREL2S : (MODULE_ >= MC_D3PHIA_) ? DISK2S : DISKPS;
   const auto projMemType = (MODULE_ >= MC_L1PHIA_ && MODULE_ <= MC_L3PHID_) ? BARRELPS : (MODULE_ > MC_D5PHID_) ? BARREL2S : DISK;
   const auto fmProjMemType = (MODULE_ >= MC_L1PHIA_ && MODULE_) ? BARREL : DISK;
-  TBHelper tb(std::string("MC/") + module_name[MODULE_]);
+  TBHelper tb(std::string("MC/") + module_name[MODULE_] + std::string("/ReducedConfig"));
 
   // error counts
   int err = 0;
 
   ///////////////////////////
   // input memories
-  const auto nCandidateMatches = tb.nFiles(candidateMatchPattern);
+  const auto nCandidateMatches = tb.nFiles(candidateMatchPattern + sectorSuffix);
   vector<CandidateMatchMemory> cmatcharray(nCandidateMatches);
-  const auto nAllProjections = tb.nFiles(allProjectionPatternarray);
+  const auto nAllProjections = tb.nFiles(allProjectionPatternarray + sectorSuffix);
   vector<AllProjectionMemory<projMemType>> allproj(nAllProjections);
-  const auto nAllStubs = tb.nFiles(allStubPatternarray);
+  const auto nAllStubs = tb.nFiles(allStubPatternarray + sectorSuffix);
   vector<AllStubMemory<stubMemType>> allstub(nAllStubs);
 
   // output memories
-  const auto nFullMatches = tb.nFiles(fullMatchPattern);
+  const auto nFullMatches = tb.nFiles(fullMatchPattern + sectorSuffix);
   vector<FullMatchMemory<fmProjMemType> > fullmatcharray(nFullMatches);
 
   // print the input files loaded
   std::cout << "Loaded the input files:\n";
   for (unsigned i = 0; i < nCandidateMatches; i++)
-    std::cout << "\t" << tb.fileNames(candidateMatchPattern).at(i) << "\n";
+    std::cout << "\t" << tb.fileNames(candidateMatchPattern + sectorSuffix).at(i) << "\n";
   for (unsigned i = 0; i < nAllProjections; i++)
-    std::cout << "\t" << tb.fileNames(allProjectionPatternarray).at(i) << "\n";
+    std::cout << "\t" << tb.fileNames(allProjectionPatternarray + sectorSuffix).at(i) << "\n";
   for (unsigned i = 0; i < nAllStubs; i++)
-    std::cout << "\t" << tb.fileNames(allStubPatternarray).at(i) << "\n";
+    std::cout << "\t" << tb.fileNames(allStubPatternarray + sectorSuffix).at(i) << "\n";
   for (unsigned i = 0; i < nFullMatches; i++)
-    std::cout << "\t" << tb.fileNames(fullMatchPattern).at(i) << "\n";
+    std::cout << "\t" << tb.fileNames(fullMatchPattern + sectorSuffix).at(i) << "\n";
   std::cout << std::endl;
 
   // loop over events
@@ -70,13 +72,13 @@ int main()
     cout << "Event: " << dec << ievt << endl;
 
     // read event and write to memories
-    auto &fin_CandidateMatches = tb.files(candidateMatchPattern);
+    auto &fin_CandidateMatches = tb.files(candidateMatchPattern + sectorSuffix);
     for (unsigned int i = 0; i < nCandidateMatches; i++)
       writeMemFromFile<CandidateMatchMemory>(cmatcharray[i], fin_CandidateMatches.at(i), ievt);
-    auto &fin_AllProjections = tb.files(allProjectionPatternarray);
+    auto &fin_AllProjections = tb.files(allProjectionPatternarray + sectorSuffix);
     for (unsigned int i = 0; i < nAllProjections; i++)
       writeMemFromFile<AllProjectionMemory<projMemType>>(allproj[i], fin_AllProjections.at(i), ievt);
-    auto &fin_AllStubs = tb.files(allStubPatternarray);
+    auto &fin_AllStubs = tb.files(allStubPatternarray + sectorSuffix);
     for (unsigned int i = 0; i < nAllStubs; i++)
       writeMemFromFile<AllStubMemory<stubMemType>>(allstub[i], fin_AllStubs.at(i), ievt);
 
@@ -92,8 +94,8 @@ int main()
     TOP_FUNC_(bx, cmatcharray.data(), allstub.data(), allproj.data(), bx_out, fullmatcharray.data());
 
     bool truncation = false;
-    auto &fout_fullmatch = tb.files(fullMatchPattern);
-    const auto &fullmatch_names = tb.fileNames(fullMatchPattern);
+    auto &fout_fullmatch = tb.files(fullMatchPattern + sectorSuffix);
+    const auto &fullmatch_names = tb.fileNames(fullMatchPattern + sectorSuffix);
     
     // compare the computed outputs with the expected ones
     for (unsigned int i = 0; i < fullmatch_names.size(); i++) {

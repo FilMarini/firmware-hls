@@ -7,23 +7,18 @@
 source env_hls.tcl
 
 set modules_to_test {
-  {MC_L1PHIC}
-  {MC_L2PHIC}
-  {MC_L3PHIC}
-  {MC_L4PHIC}
-  {MC_L5PHIC}
-  {MC_L6PHIC}
+  {MC_L3PHIB}
+  {MC_L4PHIB}
+  {MC_L5PHIB}
+  {MC_L6PHIB}
 }
-# module_to_export must correspond to the default macros set at the top of the
-# test bench; otherwise, the C/RTL cosimulation will fail
-set module_to_export MC_L3PHIC
 
 # create new project (deleting any existing one of same name)
 open_project -reset match_calc
 
 # source files
-set CFLAGS {-std=c++11 -I../TrackletAlgorithm -I../TopFunctions}
-add_files ../TopFunctions/MatchCalculatorTop.cc -cflags "$CFLAGS"
+set CFLAGS {-std=c++11 -I../TrackletAlgorithm -I../TopFunctions/ReducedConfig}
+add_files ../TopFunctions/ReducedConfig/MatchCalculatorTop.cc -cflags "$CFLAGS"
 add_files -tb ../TestBenches/MatchCalculator_test.cpp -cflags "$CFLAGS"
 
 # data files
@@ -48,15 +43,8 @@ foreach i $modules_to_test {
   # Define FPGA, clock frequency & common HLS settings.
   source settings_hls.tcl
   csim_design -mflags "-j8"
-
-  # only run C-synthesis, C/RTL cosimulation, and export for module_to_export
-  if { $i == $module_to_export } {
-    csynth_design
-    cosim_design
-    export_design -format ip_catalog
-    # Adding "-flow impl" runs full Vivado implementation, providing accurate resource use numbers (very slow).
-    #export_design -format ip_catalog -flow impl
-  }
+  csynth_design
+  cosim_design
 }
 
 exit

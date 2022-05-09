@@ -82,7 +82,9 @@ void compareStubsWithFile<0>(int &err, ifstream &fout, const int pos, const Trac
 
 int main()
 {
-  TBHelper tb(string("FT/") + module_name[MODULE_]);
+  const string sectorSuffix = "_04.dat"; //  Specifies the sector
+                                         //
+  TBHelper tb(string("FT/") + module_name[MODULE_] + string("/ReducedConfig"));
 
   // error counts
   int err = 0;
@@ -94,13 +96,13 @@ int main()
   const string barrelFM_query = "FullMatches_FM_*_L*";
   const string diskFM_query = "FullMatches_FM_*_D*";
 
-  auto &fin_tpar = tb.files("TrackletParameters*");
-  auto &fin_barrelFM = tb.files(barrelFM_query);
-  auto &fin_diskFM = tb.files(diskFM_query);
+  auto &fin_tpar = tb.files("TrackletParameters*" + sectorSuffix);
+  auto &fin_barrelFM = tb.files(barrelFM_query + sectorSuffix);
+  auto &fin_diskFM = tb.files(diskFM_query + sectorSuffix);
 
   ///////////////////////////
   // open output files
-  auto &fout_tracks = tb.files("TrackFit*");
+  auto &fout_tracks = tb.files("TrackFit*" + sectorSuffix);
 
   ///////////////////////////
   // input memories

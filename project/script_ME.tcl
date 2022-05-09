@@ -8,31 +8,48 @@ source env_hls.tcl
 
 # the set of modules to test
 set modules_to_test {
-  {ME_L1PHIC12}
-  {ME_L2PHIC20}
-  {ME_L3PHIC20}
-  {ME_L4PHIC20}
-  {ME_L5PHIC20}
-  {ME_L6PHIC20}
-  {ME_D1PHIC20}
-  {ME_D2PHIC12}
-  {ME_D3PHIC12}
-  {ME_D4PHIC12}
-  {ME_D5PHIC12}
+  {ME_L3PHIB10}
+  {ME_L3PHIB11}
+  {ME_L3PHIB12}
+  {ME_L3PHIB13}
+  {ME_L3PHIB14}
+  {ME_L3PHIB15}
+  {ME_L3PHIB16}
+  {ME_L3PHIB9}
+  {ME_L4PHIB10}
+  {ME_L4PHIB11}
+  {ME_L4PHIB12}
+  {ME_L4PHIB13}
+  {ME_L4PHIB14}
+  {ME_L4PHIB15}
+  {ME_L4PHIB16}
+  {ME_L4PHIB9}
+  {ME_L5PHIB10}
+  {ME_L5PHIB11}
+  {ME_L5PHIB12}
+  {ME_L5PHIB13}
+  {ME_L5PHIB14}
+  {ME_L5PHIB15}
+  {ME_L5PHIB16}
+  {ME_L5PHIB9}
+  {ME_L6PHIB10}
+  {ME_L6PHIB11}
+  {ME_L6PHIB12}
+  {ME_L6PHIB13}
+  {ME_L6PHIB14}
+  {ME_L6PHIB15}
+  {ME_L6PHIB16}
+  {ME_L6PHIB9}
 }
-
-# module_to_export must correspond to the default macros set at the top of the
-# test bench; otherwise, the C/RTL cosimulation will fail
-set module_to_export ME_L3PHIC20
 
 # create new project (deleting any existing one of same name)
 open_project -reset matchengine
 
 # source files
 # Optional Flags: -DDEBUG
-set CFLAGS {-std=c++11 -I../TrackletAlgorithm -I../TopFunctions}
+set CFLAGS {-std=c++11 -I../TrackletAlgorithm -I../TopFunctions/ReducedConfig}
 set_top MatchEngineTop
-add_files ../TopFunctions/MatchEngineTop.cc -cflags "$CFLAGS"
+add_files ../TopFunctions/ReducedConfig/MatchEngineTop.cc -cflags "$CFLAGS"
 add_files -tb ../TestBenches/MatchEngine_test.cpp -cflags "$CFLAGS"
 
 # data files
@@ -65,15 +82,8 @@ foreach i $modules_to_test {
   # Define FPGA, clock frequency & common HLS settings.
   source settings_hls.tcl
   csim_design -mflags "-j8"
-
-  # only run C-synthesis, C/RTL cosimulation, and export for module_to_export
-  if { $i == $module_to_export } {
-    csynth_design
-    cosim_design -trace_level all -rtl verilog
-    export_design -format ip_catalog
-    # Adding "-flow impl" runs full Vivado implementation, providing accurate resource use numbers (very slow).
-    #export_design -format ip_catalog -flow impl
-  }
+  csynth_design
+  cosim_design -trace_level all -rtl verilog
 }
 
 exit

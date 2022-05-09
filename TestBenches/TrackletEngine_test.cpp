@@ -27,6 +27,8 @@ const int nevents = 100;  // number of events to run
 using namespace std;
 
 int main(){
+  const string sectorSuffix = "_04.dat"; //  Specifies the sector
+
 #if SEED_ == L1L2_
   const auto InnerStubType = BARRELPS;
   const auto OuterStubType = BARRELPS;
@@ -50,7 +52,7 @@ int main(){
 #else
   #error "Undefined seed"
 #endif
-  TBHelper tb(string("TE/") + module_name[MODULE_]);
+  TBHelper tb(string("TE/") + module_name[MODULE_] + string("/ReducedConfig"));
 
   // error counter
   int err_count = 0;
@@ -63,9 +65,9 @@ int main(){
   StubPairMemory outputstubpairs; //produced by hls simulation
 
   // open input files from emulation
-  auto &fin_vmstubsinner = tb.files(innerStubPattern);
-  auto &fin_vmstubsouter = tb.files(outerStubPattern);
-  auto &fin_stubpairs = tb.files("StubPairs_SP_*");
+  auto &fin_vmstubsinner = tb.files(innerStubPattern + sectorSuffix);
+  auto &fin_vmstubsouter = tb.files(outerStubPattern + sectorSuffix);
+  auto &fin_stubpairs = tb.files("StubPairs_SP_*" + sectorSuffix);
 
   ap_uint<1> bendinnertable[] =
 #include INNER_TABLE_

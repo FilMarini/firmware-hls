@@ -42,7 +42,7 @@ vector<int> countCopies(const vector<string> &fileNames) {
 
 int main() {
 
-  constexpr int sector = 4; //  Specifies the sector
+  const string sectorSuffix = "_04.dat"; //  Specifies the sector
   constexpr char phi = static_cast<char>(phiRegion);
 
   char overlapPhiRegion[] = {'X', 'Y', 'Z', 'W', 'Q', 'R', 'S', 'T'}; // Special naming for the TE overlap memories, and outer memories in Disk 1
@@ -57,7 +57,7 @@ int main() {
   // Get the test vectors
 
   const string vmrID = ((kLAYER) ? "L" + to_string(kLAYER) : "D" + to_string(kDISK)) + "PHI" + phi;
-  TBHelper tb("VMR/VMR_" + vmrID);
+  TBHelper tb("VMR/VMR_" + vmrID + "/ReducedConfig");
 
   // String patterns of the memory file names
   const string inputPattern = (kLAYER) ? "InputStubs*" : "InputStubs*PS*";
@@ -70,29 +70,29 @@ int main() {
   const string teoPattern = (nvmTEO && maxTEOCopies > 1) ? "VMStubs_VMSTE*PHI" + string(1,teoPhiRegion) + "*" : "No TEOuter.";
   
   // Total number of files according to wiring, including copies
-  const auto nTotAS = tb.nFiles(allStubPattern);
-  const auto nTotVMSME = tb.nFiles(mePattern);
-  const auto nTotVMSTEI = tb.nFiles(teiPattern);
-  const auto nTotVMSTEOL = tb.nFiles(teolPattern);
-  const auto nTotVMSTEO = tb.nFiles(teoPattern);
+  const auto nTotAS = tb.nFiles(allStubPattern + sectorSuffix);
+  const auto nTotVMSME = tb.nFiles(mePattern + sectorSuffix);
+  const auto nTotVMSTEI = tb.nFiles(teiPattern + sectorSuffix);
+  const auto nTotVMSTEOL = tb.nFiles(teolPattern + sectorSuffix);
+  const auto nTotVMSTEO = tb.nFiles(teoPattern + sectorSuffix);
 
   // Open the files
   cout << "Open files..." << endl;
 
-  auto &fin_inputstubs = tb.files(inputPattern);
-  auto &fin_inputstubs_disk2s = tb.files(inputDisk2SPattern);
+  auto &fin_inputstubs = tb.files(inputPattern + sectorSuffix);
+  auto &fin_inputstubs_disk2s = tb.files(inputDisk2SPattern + sectorSuffix);
   
-  auto &fout_allstubs = tb.files(allStubPattern);
-  auto &fout_vmstubme = tb.files(mePattern);
-  auto &fout_vmstubtei = tb.files(teiPattern);
-  auto &fout_vmstubteol = tb.files(teolPattern);
-  auto &fout_vmstubteo = tb.files(teoPattern);
+  auto &fout_allstubs = tb.files(allStubPattern + sectorSuffix);
+  auto &fout_vmstubme = tb.files(mePattern + sectorSuffix);
+  auto &fout_vmstubtei = tb.files(teiPattern + sectorSuffix);
+  auto &fout_vmstubteol = tb.files(teolPattern + sectorSuffix);
+  auto &fout_vmstubteo = tb.files(teoPattern + sectorSuffix);
 
   // Get the number of copies for each TE memory
   vector<int> zero = {0};
-  auto numCopiesTEI = (nTotVMSTEI) ? countCopies(tb.fileNames(teiPattern)) : zero;
-  auto numCopiesOL = (nTotVMSTEOL) ? countCopies(tb.fileNames(teolPattern)) : zero;
-  auto numCopiesTEO = (nTotVMSTEO) ? countCopies(tb.fileNames(teoPattern)) : zero;
+  auto numCopiesTEI = (nTotVMSTEI) ? countCopies(tb.fileNames(teiPattern + sectorSuffix)) : zero;
+  auto numCopiesOL = (nTotVMSTEOL) ? countCopies(tb.fileNames(teolPattern + sectorSuffix)) : zero;
+  auto numCopiesTEO = (nTotVMSTEO) ? countCopies(tb.fileNames(teoPattern + sectorSuffix)) : zero;
 
 
   ///////////////////////////

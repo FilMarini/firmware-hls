@@ -40,6 +40,8 @@ template<TF::layerDisk LayerDisk> constexpr int getLayerDiskNumber() {
 }
 
 int main() {
+        const string sectorSuffix = "_04.dat"; //  Specifies the sector
+
 	// Error counter
 	int err_count = 0;
 
@@ -64,19 +66,19 @@ int main() {
 	assert(meName.find(std::to_string(getLayerDiskNumber<kLayerDisk>())) != std::string::npos); // Make sure the kLayerDisk matches the module name
 
 	// Open the file(s) with the input projections, the stubs, and the reference results
-	TBHelper tbh("ME/" + meName);
-	if (tbh.nFiles(vmProjectionsPattern) != 1)  return -1;
-	if (tbh.nFiles(vmStubsPattern) != 1)        return -2;
-	if (tbh.nFiles(candidateMatchPattern) != 1) return -3;
+	TBHelper tbh("ME/" + meName + "/ReducedConfig");
+	if (tbh.nFiles(vmProjectionsPattern + sectorSuffix) != 1)  return -1;
+	if (tbh.nFiles(vmStubsPattern + sectorSuffix) != 1)        return -2;
+	if (tbh.nFiles(candidateMatchPattern + sectorSuffix) != 1) return -3;
 
 	std::cout << "Loaded the input files:\n"
-			  << "\t" << tbh.fileNames(vmProjectionsPattern).at(0) << "\n"
-			  << "\t" << tbh.fileNames(vmStubsPattern).at(0) << "\n"
-			  << "\t" << tbh.fileNames(candidateMatchPattern).at(0) << std::endl;
+			  << "\t" << tbh.fileNames(vmProjectionsPattern + sectorSuffix).at(0) << "\n"
+			  << "\t" << tbh.fileNames(vmStubsPattern + sectorSuffix).at(0) << "\n"
+			  << "\t" << tbh.fileNames(candidateMatchPattern + sectorSuffix).at(0) << std::endl;
 
-	auto & fin_vmproj = tbh.files(vmProjectionsPattern).at(0);
-	auto & fin_vmstub = tbh.files(vmStubsPattern).at(0);
-	auto & fin_candmatch = tbh.files(candidateMatchPattern).at(0);
+	auto & fin_vmproj = tbh.files(vmProjectionsPattern + sectorSuffix).at(0);
+	auto & fin_vmstub = tbh.files(vmStubsPattern + sectorSuffix).at(0);
+	auto & fin_candmatch = tbh.files(candidateMatchPattern + sectorSuffix).at(0);
 
 	// Loop over events
 	for (int ievt = 0; ievt < nevents; ++ievt) {

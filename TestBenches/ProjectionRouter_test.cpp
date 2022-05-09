@@ -25,6 +25,8 @@ using namespace std;
 
 int main()
 {
+  const string sectorSuffix = "_04.dat"; //  Specifies the sector
+
   // Define memory patterns
   const string trackletProjectionPattern = "TrackletProjections*";
   const string allProjectionPattern = "AllProj*";
@@ -34,30 +36,30 @@ int main()
   assert(MODULE_ >= PR_L1PHIA_ && MODULE_ <= PR_L6PHID_); // Select for PR modules
   const auto projMemType = (MODULE_ >= PR_L1PHIA_ && MODULE_ <= PR_L3PHID_) ? BARRELPS : BARREL2S;
   const auto vmProjMemType = BARREL;
-  TBHelper tb(std::string("PR/") + module_name[MODULE_]);
+  TBHelper tb(std::string("PR/") + module_name[MODULE_] + std::string("/ReducedConfig"));
 
   // error counts
   int err = 0;
 
   ///////////////////////////
   // input memories
-  const auto nTrackletProjections = tb.nFiles(trackletProjectionPattern);
+  const auto nTrackletProjections = tb.nFiles(trackletProjectionPattern + sectorSuffix);
   vector<TrackletProjectionMemory<projMemType> > tprojarray(nTrackletProjections);
 
   // output memories
   AllProjectionMemory<projMemType> allproj;
-  const auto nAllProjections = tb.nFiles(allProjectionPattern);
-  const auto nVMProjections = tb.nFiles(vmProjectionPattern);
+  const auto nAllProjections = tb.nFiles(allProjectionPattern + sectorSuffix);
+  const auto nVMProjections = tb.nFiles(vmProjectionPattern + sectorSuffix);
   vector<VMProjectionMemory<vmProjMemType> > vmprojarray(nVMProjections);
 
   // print the input files loaded
   std::cout << "Loaded the input files:\n";
   for (unsigned i = 0; i < nTrackletProjections; i++)
-    std::cout << "\t" << tb.fileNames(trackletProjectionPattern).at(i) << "\n";
+    std::cout << "\t" << tb.fileNames(trackletProjectionPattern + sectorSuffix).at(i) << "\n";
   for (unsigned i = 0; i < nVMProjections; i++)
-    std::cout << "\t" << tb.fileNames(vmProjectionPattern).at(i) << "\n";
+    std::cout << "\t" << tb.fileNames(vmProjectionPattern + sectorSuffix).at(i) << "\n";
   for (unsigned i = 0; i < nAllProjections; i++)
-    std::cout << "\t" << tb.fileNames(allProjectionPattern).at(i) << "\n";
+    std::cout << "\t" << tb.fileNames(allProjectionPattern + sectorSuffix).at(i) << "\n";
   std::cout << std::endl;
 
   // loop over events
@@ -66,7 +68,7 @@ int main()
     cout << "Event: " << dec << ievt << endl;
 
     // read event and write to memories
-    auto &fin_TrackletProjections = tb.files(trackletProjectionPattern);
+    auto &fin_TrackletProjections = tb.files(trackletProjectionPattern + sectorSuffix);
     for (unsigned int i = 0; i < nTrackletProjections; i++)
       writeMemFromFile<TrackletProjectionMemory<projMemType> >(tprojarray[i], fin_TrackletProjections.at(i), ievt);
 
@@ -83,9 +85,9 @@ int main()
     TOP_FUNC_(bx, tprojarray.data(), bx_out, allproj, vmprojarray.data());
 
     bool truncation = false;
-    auto &fout_aproj = tb.files(allProjectionPattern);
-    auto &fout_vmproj = tb.files(vmProjectionPattern);
-    const auto &vmproj_names = tb.fileNames(vmProjectionPattern);
+    auto &fout_aproj = tb.files(allProjectionPattern + sectorSuffix);
+    auto &fout_vmproj = tb.files(vmProjectionPattern + sectorSuffix);
+    const auto &vmproj_names = tb.fileNames(vmProjectionPattern + sectorSuffix);
     
     // compare the computed outputs with the expected ones
     // AllProjection

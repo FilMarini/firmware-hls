@@ -28,6 +28,8 @@ using namespace std;
 
 int main()
 {
+  const string sectorSuffix = "_04.dat"; //  Specifies the sector
+
   // these need to be customized according to the specific TC being tested
 #if SEED_ == L1L2_
   const auto InnerStubType = BARRELPS;
@@ -52,15 +54,15 @@ int main()
 #else
   #error "Undefined seed"
 #endif
-  TBHelper tb(std::string("TC/") + module_name[MODULE_]);
+  TBHelper tb(std::string("TC/") + module_name[MODULE_] + std::string("/ReducedConfig"));
 
   // error counts
   int err = 0;
 
   // input memories
-  const auto nStubPairMems = tb.nFiles("StubPairs*");
-  const auto nInnerStubMems = tb.nFiles(innerStubPattern);
-  const auto nOuterStubMems = tb.nFiles(outerStubPattern);
+  const auto nStubPairMems = tb.nFiles("StubPairs*" + sectorSuffix);
+  const auto nInnerStubMems = tb.nFiles(innerStubPattern + sectorSuffix);
+  const auto nOuterStubMems = tb.nFiles(outerStubPattern + sectorSuffix);
   vector<AllStubMemory<InnerStubType> > innerStubs(nInnerStubMems);
   vector<AllStubMemory<OuterStubType> > outerStubs(nOuterStubMems);
   vector<StubPairMemory> stubPairs(nStubPairMems);
@@ -72,21 +74,21 @@ int main()
   TrackletProjectionMemory<DISK> tproj_disk[TC::N_PROJOUT_DISK];
 
   // open input files from emulation
-  auto &fin_innerStubs = tb.files(innerStubPattern);
-  auto &fin_outerStubs = tb.files(outerStubPattern);
-  auto &fin_stubPairs = tb.files("StubPairs*");
-  auto &fout_tpar = tb.files("TrackletParameters*");
-  auto &fout_tproj = tb.files("TrackletProjections*");
-  const auto &tproj_names = tb.fileNames("TrackletProjections*");
+  auto &fin_innerStubs = tb.files(innerStubPattern + sectorSuffix);
+  auto &fin_outerStubs = tb.files(outerStubPattern + sectorSuffix);
+  auto &fin_stubPairs = tb.files("StubPairs*" + sectorSuffix);
+  auto &fout_tpar = tb.files("TrackletParameters*" + sectorSuffix);
+  auto &fout_tproj = tb.files("TrackletProjections*" + sectorSuffix);
+  const auto &tproj_names = tb.fileNames("TrackletProjections*" + sectorSuffix);
 
   // print the input files loaded
   std::cout << "Loaded the input files:\n";
   for (unsigned i = 0; i < nInnerStubMems; i++)
-    std::cout << "\t" << tb.fileNames(innerStubPattern).at(i) << "\n";
+    std::cout << "\t" << tb.fileNames(innerStubPattern + sectorSuffix).at(i) << "\n";
   for (unsigned i = 0; i < nOuterStubMems; i++)
-    std::cout << "\t" << tb.fileNames(outerStubPattern).at(i) << "\n";
+    std::cout << "\t" << tb.fileNames(outerStubPattern + sectorSuffix).at(i) << "\n";
   for (unsigned i = 0; i < nStubPairMems; i++)
-    std::cout << "\t" << tb.fileNames("StubPairs*").at(i) << "\n";
+    std::cout << "\t" << tb.fileNames("StubPairs*" + sectorSuffix).at(i) << "\n";
   std::cout << std::endl;
 
   // loop over events
