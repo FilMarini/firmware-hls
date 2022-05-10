@@ -158,11 +158,11 @@ mkdir -p ../../IntegrationTests/ReducedConfig/MCTB/{hdl,tb}
 mv -fv memUtil_pkg.vhd SectorProcessor.vhd SectorProcessorFull.vhd ../../IntegrationTests/ReducedConfig/MCTB/hdl/
 mv -fv tb_tf_top.vhd ../../IntegrationTests/ReducedConfig/MCTB/tb/
 ### Barrel IRtoTB
-./generator_hdl.py ../../ --no_graph --mut IR -u 0 -d 7 -w barrel_wires.dat -p barrel_processingmodules.dat -m barrel_memorymodules.dat
-./generator_hdl.py ../../ --no_graph --mut IR -u 0 -d 7 -w barrel_wires.dat -p barrel_processingmodules.dat -m barrel_memorymodules.dat -x
-mkdir -p ../../IntegrationTests/BarrelConfig/IRtoTB/{hdl,tb}
-mv -fv memUtil_pkg.vhd SectorProcessor.vhd SectorProcessorFull.vhd ../../IntegrationTests/BarrelConfig/IRtoTB/hdl/
-mv -fv tb_tf_top.vhd ../../IntegrationTests/BarrelConfig/IRtoTB/tb/
+#./generator_hdl.py ../../ --no_graph --mut IR -u 0 -d 7 -w barrel_wires.dat -p barrel_processingmodules.dat -m barrel_memorymodules.dat
+#./generator_hdl.py ../../ --no_graph --mut IR -u 0 -d 7 -w barrel_wires.dat -p barrel_processingmodules.dat -m barrel_memorymodules.dat -x
+#mkdir -p ../../IntegrationTests/BarrelConfig/IRtoTB/{hdl,tb}
+#mv -fv memUtil_pkg.vhd SectorProcessor.vhd SectorProcessorFull.vhd ../../IntegrationTests/BarrelConfig/IRtoTB/hdl/
+#mv -fv tb_tf_top.vhd ../../IntegrationTests/BarrelConfig/IRtoTB/tb/
 
 # Remove untracked file and return to emData/
 rm -fv script_sectproc.tcl
