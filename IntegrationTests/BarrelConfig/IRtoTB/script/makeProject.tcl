@@ -3,7 +3,8 @@
 
 # Create project
 set projName "Work"
-set FPGA "xcvu7p-flvb2104-1-e"
+#set FPGA "xcvu7p-flvb2104-1-e"
+set FPGA "xcvu13p-fhgb2104-1-e"
 create_project -force ${projName} ./${projName} -part $FPGA
 set_property target_language VHDL [current_project]
 
