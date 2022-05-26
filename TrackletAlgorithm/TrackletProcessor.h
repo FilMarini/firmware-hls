@@ -11,6 +11,20 @@
 #include "TEBuffer.h"
 #include "TrackletEngineUnit.h"
 #include "TrackletProcessor_parameters.h"
+template<TF::seed Seed> constexpr regionType InnerRegion() {
+  return (
+    (Seed == TF::L1L2 || Seed == TF::L2L3 || Seed == TF::L3L4 || Seed == TF::L1D1 || Seed == TF::L2D1) ? BARRELPS : (
+      (Seed == TF::L5L6) ? BARREL2S : DISKPS
+    )
+  );
+}
+template<TF::seed Seed> constexpr regionType OuterRegion() {
+  return (
+    (Seed == TF::L1L2 || Seed == TF::L2L3) ? BARRELPS : (
+      (Seed == TF::L3L4 || Seed == TF::L5L6) ? BARREL2S : DISKPS
+    )
+  );
+}
 
 namespace TC {
 ////////////////////////////////////////////////////////////////////////////////
@@ -168,14 +182,14 @@ namespace TC {
   );
 
   template<TF::seed Seed, regionType InnerRegion, regionType OuterRegion> bool barrelSeeding(const AllStub<InnerRegion> &innerStub, const AllStub<OuterRegion> &outerStub, Types::rinv * const rinv, TrackletParameters::PHI0PAR * const phi0, Types::z0 * const z0, TrackletParameters::TPAR * const t, Types::phiL phiL[4], Types::zL zL[4], Types::der_phiL * const der_phiL, Types::der_zL * const der_zL, Types::flag valid_proj[4], Types::phiD phiD[4], Types::rD rD[4], Types::der_phiD * const der_phiD, Types::der_rD * const der_rD, Types::flag valid_proj_disk[4]);
-  template<TF::seed Seed, regionType InnerRegion, regionType OuterRegion> bool overlapSeeding(const AllStub<InnerRegion> &innerStub, const AllStub<OuterRegion> &outerStub, Types::rinv * const rinv, TrackletParameters::PHI0PAR * const phi0, Types::z0 * const z0, TrackletParameters::TPAR * const t, Types::phiL phiL[4], Types::zL zL[4], Types::der_phiL * const der_phiL, Types::der_zL * const der_zL, Types::flag valid_proj[4], Types::phiD phiD[4], Types::rD rD[4], Types::der_phiD * const der_phiD, Types::der_rD * const der_rD, Types::flag valid_proj_disk[4]);
+  template<TF::seed Seed,regionType InnerRegion, regionType OuterRegion> bool overlapSeeding(const AllStub<InnerRegion> &innerStub, const AllStub<OuterRegion> &outerStub, Types::rinv * const rinv, TrackletParameters::PHI0PAR * const phi0, Types::z0 * const z0, TrackletParameters::TPAR * const t, Types::phiL phiL[4], Types::zL zL[4], Types::der_phiL * const der_phiL, Types::der_zL * const der_zL, Types::flag valid_proj[4], Types::phiD phiD[4], Types::rD rD[4], Types::der_phiD * const der_phiD, Types::der_rD * const der_rD, Types::flag valid_proj_disk[4]);
 
   template<TF::seed Seed, itc iTC> const TrackletProjection<BARRELPS>::TProjTCID ID();
 
   template<regionType TProjType, uint8_t NProjOut, uint32_t TPROJMask> bool addProj(const TrackletProjection<TProjType> &proj, const BXType bx, TrackletProjectionMemory<TProjType> projout[NProjOut], int nproj[NProjOut], const bool success);
 
   template<TF::seed Seed, regionType InnerRegion, regionType OuterRegion, uint32_t TPROJMaskBarrel, uint32_t TPROJMaskDisk> void
-    processStubPair(
+  processStubPair(
 		    const BXType bx,
 		    const ap_uint<kNBits_MemAddr> innerIndex,
 		    const AllStub<InnerRegion> &innerStub,
@@ -196,20 +210,6 @@ namespace TC {
 
 }
 
-template<TF::seed Seed> constexpr regionType InnerRegion() {
-  return (
-    (Seed == TF::L1L2 || Seed == TF::L2L3 || Seed == TF::L3L4 || Seed == TF::L1D1 || Seed == TF::L2D1) ? BARRELPS : (
-      (Seed == TF::L5L6) ? BARREL2S : DISK
-    )
-  );
-}
-template<TF::seed Seed> constexpr regionType OuterRegion() {
-  return (
-    (Seed == TF::L1L2 || Seed == TF::L2L3) ? BARRELPS : (
-      (Seed == TF::L3L4 || Seed == TF::L5L6) ? BARREL2S : DISK
-    )
-  );
-}
 
 ap_uint<1> nearFullTEBuff(const ap_uint<3>&, const ap_uint<3>&);
 ap_uint<(1<<(2*TrackletEngineUnit<TF::L1L2,TC::D,BARRELPS,BARRELPS>::kNBitsBuffer))> nearFullTEUnitInit();
@@ -380,8 +380,8 @@ TC::overlapSeeding(const AllStub<InnerRegion> &innerStub, const AllStub<OuterReg
   rproj[2] = rmean[TF::L4];
   ap_int<2> negZ = ((innerStub.getZ()<0) ? -1 : 1);
   //std::cout<<"negz:"<<negZ;
-  TC::Types::zmean z2mean = negZ*zmean[TF::D1];
-  TC::Types::zmean zproj[4] = {zmean[TF::D2], zmean[TF::D3],  zmean[TF::D4],zmean[TF::D5]};
+  TC::Types::zmean z2mean = negZ * zmean[TF::D1];
+  TC::Types::zmean zproj[4] = {zmean[TF::D2], zmean[TF::D3], zmean[TF::D4], zmean[TF::D5]};
   calculate_LXD1<Seed, InnerRegion, OuterRegion>(
       innerStub.getR(),
       innerStub.getPhi(),
@@ -422,7 +422,7 @@ TC::overlapSeeding(const AllStub<InnerRegion> &innerStub, const AllStub<OuterReg
       der_phiD,
       der_rD
   );
-
+  if (!((negZ<0) == (*t<0))){ std::cout<<"MISMATCH!"<<std::endl;}
   //return false; //ryd
 
 
@@ -809,7 +809,6 @@ TrackletProcessor(
 
 
     if (HaveTEData) {
-      //std::cout<<"HAVETEDAT";
       TC::processStubPair<Seed, InnerRegion, OuterRegion, TPROJMaskBarrel<Seed, iTC>(), TPROJMaskDisk<Seed, iTC>()>(bx, innerIndex, AllStub<InnerRegion>(innerStub), outerIndex, outerStub, TCId, trackletIndex, trackletParameters, projout_barrel_ps, projout_barrel_2s, projout_disk, npar, nproj_barrel_ps, nproj_barrel_2s, nproj_disk);
     }
     
@@ -830,7 +829,6 @@ TrackletProcessor(
 
       const typename VMStubTEOuter<OuterRegion>::VMSTEOFINEPHI& finephi = teunits[k].outervmstub___.getFinePhi();
       const ap_uint<1+VMStubTEOuterBase<OuterRegion>::kVMSTEOFineZSize>& rzbin = (teunits[k].next___, teunits[k].outervmstub___.getFineZ()); 
-      std::cout<<"FINEZ: "<<teunits[k].outervmstub___.getFineZ();
       ap_uint<NBitsPhiRegion> iAllstub=OuterPhiRegion;
       ap_uint<NfinephiBits> outerfinephi = (iAllstub, teunits[k].ireg___, finephi);
       

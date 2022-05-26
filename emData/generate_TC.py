@@ -98,7 +98,7 @@ with open(arguments.wiresFileName, "r") as wiresFile:
                 asInnerMems[tcName] = []
             asInnerMems[tcName].append(memName)
         if ("TC_L2L3" in line and memName.startswith("AS_L3")) or ("TC_L2L3" not in line and \
-          (memName.startswith("AS_L2") or memName.startswith("AS_L4") or memName.startswith("AS_L6") or \
+          ((memName.startswith("AS_L2") and "TC_L2D1" not in line) or memName.startswith("AS_L4") or memName.startswith("AS_L6") or \
            memName.startswith("AS_D4") or memName.startswith("AS_D2")) or \
            (("TC_L2D1" in line or "TC_L1D1" in line) and memName.startswith("AS_D1"))):
             if tcName not in asOuterMems:
@@ -186,8 +186,6 @@ with open(os.path.join(dirname, arguments.outputDirectory, "TrackletCalculator_p
             outerPart = re.sub(r".*_(..PHI.).*_(..PHI.).*", r"\2", spMems[tcName][i])
             innerIndex = -1
             outerIndex = -1
-            if seed == "D3D4" and iTC == "C":
-              print (innerPart,outerPart)
             # for L2L3, the letters in the AS names are shifted relative to
             # those in the SP names
             innerPart = re.sub(r"PHII", r"PHIA", innerPart)
@@ -207,8 +205,6 @@ with open(os.path.join(dirname, arguments.outputDirectory, "TrackletCalculator_p
             outerPart = re.sub(r"PHIJ", r"PHIB", outerPart)
             outerPart = re.sub(r"PHIK", r"PHIC", outerPart)
             outerPart = re.sub(r"PHIL", r"PHID", outerPart)
-
-
             outerPart = re.sub(r"PHIQ", r"PHIE", outerPart)
             outerPart = re.sub(r"PHIR", r"PHIF", outerPart)
             outerPart = re.sub(r"PHIS", r"PHIG", outerPart)
@@ -217,6 +213,7 @@ with open(os.path.join(dirname, arguments.outputDirectory, "TrackletCalculator_p
             outerPart = re.sub(r"PHIX", r"PHIA", outerPart)
             outerPart = re.sub(r"PHIY", r"PHIB", outerPart)
             outerPart = re.sub(r"PHIZ", r"PHIC", outerPart)
+
             for j in range(0, nASMemInner):
                 if innerPart in asInnerMems[tcName][j]:
                     innerIndex = j
@@ -268,7 +265,7 @@ with open(os.path.join(dirname, arguments.outputDirectory, "TrackletCalculator_p
             "    const BXType bx,\n"
             "    const AllStubMemory<InnerRegion<TF::" + seed + ">()> innerStubs[],\n"
             "    const AllStubMemory<OuterRegion<TF::" + seed + ">()> outerStubs[],\n"
-            "    const StubPairMemory stubPairs[],\n"
+            "    const StubPairMemory<isDiskSeed<TF::"+ seed + ">()> stubPairs[],\n"
             "    BXType& bx_o,\n"
             "    TrackletParameterMemory * trackletParameters,\n"
             "    TrackletProjectionMemory<BARRELPS> projout_barrel_ps[],\n"
@@ -284,7 +281,7 @@ with open(os.path.join(dirname, arguments.outputDirectory, "TrackletCalculator_p
             "    const BXType bx,\n"
             "    const AllStubMemory<InnerRegion<TF::" + seed + ">()> innerStubs[" + str(nASMemInner) + "],\n"
             "    const AllStubMemory<OuterRegion<TF::" + seed + ">()> outerStubs[" + str(nASMemOuter) + "],\n"
-            "    const StubPairMemory stubPairs[" + str(nSPMem) + "],\n"
+            "    const StubPairMemory<isDiskSeed<TF::" + seed + ">()> stubPairs[" + str(nSPMem) + "],\n"
             "    BXType& bx_o,\n"
             "    TrackletParameterMemory * trackletParameters,\n"
             "    TrackletProjectionMemory<BARRELPS> projout_barrel_ps[TC::N_PROJOUT_BARRELPS],\n"

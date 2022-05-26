@@ -22,7 +22,7 @@
   #define TOP_FUNC_ TrackletCalculator_L1L2E
 #endif
 
-const int nevents = 2;  //number of events to run
+const int nevents = 1;  //number of events to run
 
 using namespace std;
 
@@ -72,6 +72,7 @@ int main()
 #else
   #error "Undefined seed"
 #endif
+  const bool isDiskSeed = (InnerStubType==DISKPS);
   TBHelper tb(std::string("TC/") + module_name[MODULE_]);
 
   // error counts
@@ -83,7 +84,7 @@ int main()
   const auto nOuterStubMems = tb.nFiles(outerStubPattern);
   vector<AllStubMemory<InnerStubType> > innerStubs(nInnerStubMems);
   vector<AllStubMemory<OuterStubType> > outerStubs(nOuterStubMems);
-  vector<StubPairMemory> stubPairs(nStubPairMems);
+  vector<StubPairMemory<isDiskSeed>> stubPairs(nStubPairMems);
 
   // output memories
   TrackletParameterMemory tpar;
@@ -120,7 +121,7 @@ int main()
     for (unsigned i = 0; i < nOuterStubMems; i++)
       writeMemFromFile<AllStubMemory<OuterStubType> >(outerStubs[i], fin_outerStubs.at(i), ievt);
     for (unsigned i = 0; i < nStubPairMems; i++)
-      writeMemFromFile<StubPairMemory>(stubPairs[i], fin_stubPairs.at(i), ievt);
+      writeMemFromFile<StubPairMemory<isDiskSeed>>(stubPairs[i], fin_stubPairs.at(i), ievt);
 
     // clear all output memories before starting
     tpar.clear();
@@ -280,6 +281,18 @@ int main()
       else if (tproj_name.find("_D4PHID") != string::npos)
         err += compareMemWithFile<TrackletProjectionMemory<DISK> >(tproj_disk[TC::D4PHID], fout, ievt,
                                                        "\nTrackletProjection (D4PHID)", truncation);
+      else if (tproj_name.find("_D5PHIA") != string::npos)
+        err += compareMemWithFile<TrackletProjectionMemory<DISK> >(tproj_disk[TC::D5PHIA], fout, ievt,
+                                                       "\nTrackletProjection (D5PHIA)", truncation);
+      else if (tproj_name.find("_D5PHIB") != string::npos)
+        err += compareMemWithFile<TrackletProjectionMemory<DISK> >(tproj_disk[TC::D5PHIB], fout, ievt,
+                                                       "\nTrackletProjection (D5PHIB)", truncation);
+      else if (tproj_name.find("_D5PHIC") != string::npos)
+        err += compareMemWithFile<TrackletProjectionMemory<DISK> >(tproj_disk[TC::D5PHIC], fout, ievt,
+                                                       "\nTrackletProjection (D5PHIC)", truncation);
+      else if (tproj_name.find("_D5PHID") != string::npos)
+        err += compareMemWithFile<TrackletProjectionMemory<DISK> >(tproj_disk[TC::D5PHID], fout, ievt,
+                                                       "\nTrackletProjection (D5PHID)", truncation);
     }
     cout << endl;
 
