@@ -35,6 +35,7 @@ entity tf_mem is
     INIT_FILE       : string := "";                --! Specify name/location of RAM initialization file if using one (leave blank if not)
     INIT_HEX        : boolean := true;             --! Read init file in hex (default) or bin
     RAM_PERFORMANCE : string := "HIGH_PERFORMANCE"; --! Select "HIGH_PERFORMANCE" (2 clk latency) or "LOW_LATENCY" (1 clk latency)
+    RAM_TYPE : string := "BLOCK";
     DELAY : natural := 0
     );
   port (
@@ -108,7 +109,7 @@ signal dina_pipe : t_dina;
 
 -- ########################### Attributes ###########################
 attribute ram_style : string;
-attribute ram_style of sa_RAM_data : signal is "block";
+attribute ram_style of sa_RAM_data : signal is RAM_TYPE;
 
 begin
 
