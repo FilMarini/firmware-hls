@@ -1,5 +1,5 @@
 #include "ap_int.h"
-
+template <TF::seed Seed, regionType InnerRegion, regionType OuterRegion>
 void TC::calculate_DXDY (
   const typename AllStub<InnerRegion>::ASR r1_input,
   const typename AllStub<InnerRegion>::ASPHI phi1_input,
@@ -910,7 +910,7 @@ const ap_int<11> der_zL_final = t_final >> 3;
 // STEP 0
 
 // units 2^(0)Kz^(1)	0.0585938
-const ap_int<14> zproj0 = zproj0_input;
+const ap_int<14> zproj0 = t > 0 ? ap_int<14>(zproj0_input) : ap_int<14>(-zproj0_input-1);
 //
 // STEP 1
 
@@ -1023,7 +1023,7 @@ const ap_int<16> phiD_0_final = phiD_0 >> 2;
 // STEP 0
 
 // units 2^(0)Kz^(1)	0.0585938
-const ap_int<14> zproj1 = zproj1_input;
+const ap_int<14> zproj1 = t > 0 ? ap_int<14>(zproj1_input) : ap_int<14>(-zproj1_input-1);
 //
 // STEP 1
 
@@ -1091,7 +1091,7 @@ const ap_int<16> phiD_1_final = phiD_1 >> 2;
 // STEP 0
 
 // units 2^(0)Kz^(1)	0.0585938
-const ap_int<14> zproj2 = zproj2_input;
+const ap_int<14> zproj2 = t > 0 ? ap_int<14>(zproj2_input) : ap_int<14>(-zproj2_input-1);
 //
 // STEP 1
 
