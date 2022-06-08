@@ -270,9 +270,9 @@ namespace TC {
     Types::der_rD * const der_rD_output
   );
   template<TF::seed Seed> bool barrelSeeding(const AllStub<InnerRegion<Seed>()> &innerStub, const AllStub<OuterRegion<Seed>()> &outerStub, Types::rinv * const rinv, TrackletParameters::PHI0PAR * const phi0, Types::z0 * const z0, TrackletParameters::TPAR * const t, Types::phiL phiL[4], Types::zL zL[4], Types::der_phiL * const der_phiL, Types::der_zL * const der_zL, Types::flag valid_proj[4], Types::phiD phiD[4], Types::rD rD[4], Types::der_phiD * const der_phiD, Types::der_rD * const der_rD, Types::flag valid_proj_disk[4]);
-  template<TF::seed Seed, regionType InnerRegion, regionType OuterRegion> bool overlapSeeding(const AllStub<InnerRegion> &innerStub, const AllStub<OuterRegion> &outerStub, Types::rinv * const rinv, TrackletParameters::PHI0PAR * const phi0, Types::z0 * const z0, TrackletParameters::TPAR * const t, Types::phiL phiL[4], Types::zL zL[4], Types::der_phiL * const der_phiL, Types::der_zL * const der_zL, Types::flag valid_proj[4], Types::phiD phiD[4], Types::rD rD[4], Types::der_phiD * const der_phiD, Types::der_rD * const der_rD, Types::flag valid_proj_disk[4]);
-  template<TF::seed Seed, regionType InnerRegion, regionType OuterRegion> bool diskSeeding(const bool negZ, const AllStub<InnerRegion> &innerStub, const AllStub<OuterRegion> &outerStub, Types::rinv * const rinv, TrackletParameters::PHI0PAR * const phi0, Types::z0 * const z0, TrackletParameters::TPAR * const t, Types::phiL phiL[4], Types::zL zL[4], Types::der_phiL * const der_phiL, Types::der_zL * const der_zL, Types::flag valid_proj[4], Types::phiD phiD[4], Types::rD rD[4], Types::der_phiD * const der_phiD, Types::der_rD * const der_rD, Types::flag valid_proj_disk[4]);
-  
+  template<TF::seed Seed> bool overlapSeeding(const AllStub<InnerRegion<Seed>()> &innerStub, const AllStub<OuterRegion<Seed>()> &outerStub, Types::rinv * const rinv, TrackletParameters::PHI0PAR * const phi0, Types::z0 * const z0, TrackletParameters::TPAR * const t, Types::phiL phiL[4], Types::zL zL[4], Types::der_phiL * const der_phiL, Types::der_zL * const der_zL, Types::flag valid_proj[4], Types::phiD phiD[4], Types::rD rD[4], Types::der_phiD * const der_phiD, Types::der_rD * const der_rD, Types::flag valid_proj_disk[4]);
+  template<TF::seed Seed> bool diskSeeding(const bool negZ, const AllStub<InnerRegion<Seed>()> &innerStub, const AllStub<OuterRegion<Seed>()> &outerStub, Types::rinv * const rinv, TrackletParameters::PHI0PAR * const phi0, Types::z0 * const z0, TrackletParameters::TPAR * const t, Types::phiL phiL[4], Types::zL zL[4], Types::der_phiL * const der_phiL, Types::der_zL * const der_zL, Types::flag valid_proj[4], Types::phiD phiD[4], Types::rD rD[4], Types::der_phiD * const der_phiD, Types::der_rD * const der_rD, Types::flag valid_proj_disk[4]);
+
   template<TF::seed Seed, TC::itc iTC> const TrackletProjection<BARRELPS>::TProjTCID ID();
 
   template<regionType TProjType, uint8_t NProjOut, uint32_t TPROJMask> bool addProj(const TrackletProjection<TProjType> &proj, const BXType bx, TrackletProjectionMemory<TProjType> projout[NProjOut], ap_uint<kNBits_MemAddr> nproj[NProjOut], const bool success);
@@ -473,8 +473,8 @@ TC::barrelSeeding(const AllStub<InnerRegion<Seed>()> &innerStub, const AllStub<O
 
 // This function calls calculate_LXD1, defined in
 // TrackletCalculator_calculate_LXD1.h, and applies cuts to the results.
-template<TF::seed Seed, regionType InnerRegion, regionType OuterRegion> bool
-TC::overlapSeeding(const AllStub<InnerRegion> &innerStub, const AllStub<OuterRegion> &outerStub, TC::Types
+template<TF::seed Seed> bool
+TC::overlapSeeding(const AllStub<InnerRegion<Seed>()> &innerStub, const AllStub<OuterRegion<Seed>()> &outerStub, TC::Types
 ::rinv * const rinv, TrackletParameters::PHI0PAR * const phi0, TC::Types::z0 * const z0, TrackletParameters::TPAR * const t, TC::Types::phiL phiL[4], TC::Types::zL zL[4], TC::Types::der_phiL * const der_phiL, TC::Types::der_zL * const der_zL, TC::Types::flag valid_proj[4], TC::Types::phiD phiD[4], TC::Types::rD rD[4], TC::Types::der_phiD * const der_phiD, TC::Types::der_rD * const der_rD, TC::Types::flag valid_proj_disk[4])
 {
   TC::Types::rmean r1mean, rproj[3];
@@ -495,7 +495,7 @@ TC::overlapSeeding(const AllStub<InnerRegion> &innerStub, const AllStub<OuterReg
     rproj[2] = rmean[TF::L4];
 
   }
-  calculate_LXD1<Seed, InnerRegion, OuterRegion>(
+  calculate_LXD1<Seed, InnerRegion<Seed>(), OuterRegion<Seed>()>(
       innerStub.getR(),
       innerStub.getPhi(),
       innerStub.getZ(),
@@ -575,8 +575,8 @@ TC::overlapSeeding(const AllStub<InnerRegion> &innerStub, const AllStub<OuterReg
 
 #include "TrackletCalculator_calculate_DXDY.h"
 
-template<TF::seed Seed, regionType InnerRegion, regionType OuterRegion> bool
-TC::diskSeeding(const bool negZ, const AllStub<InnerRegion> &innerStub, const AllStub<OuterRegion> &outerStub, TC::Types
+template<TF::seed Seed> bool
+TC::diskSeeding(const bool negZ, const AllStub<InnerRegion<Seed>()> &innerStub, const AllStub<OuterRegion<Seed>()> &outerStub, TC::Types
 ::rinv * const rinv, TrackletParameters::PHI0PAR * const phi0, TC::Types::z0 * const z0, TrackletParameters::TPAR * const t, TC::Types::phiL phiL[4], TC::Types::zL zL[4], TC::Types::der_phiL * const der_phiL, TC::Types::der_zL * const der_zL, TC::Types::flag valid_proj[4], TC::Types::phiD phiD[4], TC::Types::rD rD[4], TC::Types::der_phiD * const der_phiD, TC::Types::der_rD * const der_rD, TC::Types::flag valid_proj_disk[4])
 {
   TC::Types::rmean r1mean, rproj[3];
@@ -601,7 +601,7 @@ TC::diskSeeding(const bool negZ, const AllStub<InnerRegion> &innerStub, const Al
     zproj[2] = zmean[TF::D5];
 
   }
-  calculate_DXDY<Seed, InnerRegion, OuterRegion>(
+  calculate_DXDY<Seed, InnerRegion<Seed>(), OuterRegion<Seed>()>(
       innerStub.getR(),
       innerStub.getPhi(),
       innerStub.getZ(),
@@ -855,12 +855,12 @@ TC::processStubPair(
   if (Seed == TF::L1L2 || Seed == TF::L2L3 || Seed == TF::L3L4 || Seed == TF::L5L6)
     success = TC::barrelSeeding<Seed>(innerStub, outerStub, &rinv, &phi0, &z0, &t, phiL, zL, &der_phiL, &der_zL, valid_proj, phiD, rD, &der_phiD, &der_rD, valid_proj_disk);
   else if (Seed == TF::L1D1 || Seed == TF::L2D1){
-    success = TC::overlapSeeding<Seed, InnerRegion<Seed>(), OuterRegion<Seed>()>(innerStub, outerStub, &rinv, &phi0, &z0, &t, phiL, zL, &der_phiL, &der_zL, valid_proj, phiD, rD, &der_phiD, &der_rD, valid_proj_disk);
+    success = TC::overlapSeeding<Seed>(innerStub, outerStub, &rinv, &phi0, &z0, &t, phiL, zL, &der_phiL, &der_zL, valid_proj, phiD, rD, &der_phiD, &der_rD, valid_proj_disk);
     stubIndex1 = outerIndex;
     stubIndex2 = innerIndex;}
     //stub indices are reversed on overlap seeds for some reason.
   else {
-    success = TC::diskSeeding<Seed, InnerRegion<Seed>(), OuterRegion<Seed>()>(negZ, innerStub, outerStub, &rinv, &phi0, &z0, &t, phiL, zL, &der_phiL, &der_zL, valid_proj, phiD, rD, &der_phiD, &der_rD, valid_proj_disk);
+    success = TC::diskSeeding<Seed>(negZ, innerStub, outerStub, &rinv, &phi0, &z0, &t, phiL, zL, &der_phiL, &der_zL, valid_proj, phiD, rD, &der_phiD, &der_rD, valid_proj_disk);
   
   }
 // Write the tracklet parameters and projections to the output memories.
