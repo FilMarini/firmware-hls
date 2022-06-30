@@ -6,7 +6,7 @@
 -- Author     : Filippo Marini  <filippo.marini@cern.ch>
 -- Company    : University of Colorado Boulder
 -- Created    : 2022-06-27
--- Last update: 2022-06-27
+-- Last update: 2022-06-30
 -- Platform   : 
 -- Standard   : VHDL'93/02
 -------------------------------------------------------------------------------
@@ -23,6 +23,12 @@ use ieee.std_logic_1164.all;
 use work.emp_data_types.all;
 use work.emp_device_decl.all;
 use work.emp_ttc_decl.all;
+
+use work.hybrid_config.all;
+use work.hybrid_data_types.all;
+use work.tracklet_config.all;
+use work.tracklet_data_types.all;
+use work.emp_conv_pkg.all;
 
 entity linktosecproc is
   port (
