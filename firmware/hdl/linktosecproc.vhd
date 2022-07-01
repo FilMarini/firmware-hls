@@ -24,11 +24,15 @@ use work.emp_data_types.all;
 use work.emp_device_decl.all;
 use work.emp_ttc_decl.all;
 
+-- emp thomas
 use work.hybrid_config.all;
 use work.hybrid_data_types.all;
 use work.tracklet_config.all;
 use work.tracklet_data_types.all;
 use work.emp_conv_pkg.all;
+-- emp US
+use work.tf_pkg.all;
+use work.memUtil_pkg.all;
 
 entity linktosecproc is
   port (
