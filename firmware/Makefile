@@ -1,10 +1,10 @@
 core_file = cfg/include_cores.tcl
-core_dir = cgnasada
+core_dir = cgn
 core_append = /impl/ip/component.xml
 core_path = ../../../src/firmware-hls/firmware
 hls_script_path = ../IntegrationTests/ReducedConfig/IRtoTB/script
 
-all: $(core_dir) $(core_file)
+all: $(core_file) hls_add_files
 
 $(core_dir):
 	@mkdir cgn
@@ -17,3 +17,7 @@ $(core_file): $(core_dir)
 	@echo -e "source ../../../src/firmware-hls/firmware/cfg/ip_tools.tcl" >> $(core_file);
 	@$(foreach core,$(CORE_FILES),echo -e "tool_add_core -level 0 $(core_path)/$(core)" >> $(core_file);)	
 
+hdl_add_files: $(core_file)
+	cd hdl; ln -s ../$(hls_script_path)/../hdl/*.vhd .
+
+.PHONY: hls_add_files
