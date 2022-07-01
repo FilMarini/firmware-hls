@@ -64,7 +64,7 @@ begin  -- architecture rtl
 
   tracklet_format_in_1 : entity work.tracklet_format_in
     port map (
-      clk      => clk_p,
+      clk      => clk_i,
       in_reset => s_tracklet_reset,
       in_din   => s_tracklet_isol,
       in_dout  => s_tracklet_data

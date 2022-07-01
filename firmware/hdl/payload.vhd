@@ -61,7 +61,7 @@ begin  -- architecture rtl
       din_i                => d,
       DL_39_link_AV_dout   => s_IR_data,
       DL_39_link_empty_neg => open,
-      DL_39_link_read      => '0'
+      DL_39_link_read      => (others => '0')
       );
 
 end architecture rtl;
