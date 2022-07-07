@@ -2,9 +2,9 @@
 source ../../../../project/env_hls.tcl
 source ../../../common/script/tools.tcl
 source ../../../common/script/build_ip.tcl
-linkCreate ../../../common common
-linkCreate ../../../../emData/MemPrintsReduced MemPrints
-linkCreate ../../../../emData/LUTsReduced LUTs
+linkCreate ../../../common ../../../../firmware/hdl/common
+linkCreate ../../../../emData/MemPrintsReduce ../../../../firmware/mem/MemPrints
+linkCreate ../../../../emData/LUTsReduced ../../../../firmware/mem/LUTs
 set cwd ../../../../firmware/cgn/
 cd $cwd
 set CFLAGS {-std=c++11 -I../../TrackletAlgorithm -I../../TopFunctions/ReducedConfig}

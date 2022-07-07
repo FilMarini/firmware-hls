@@ -33,7 +33,7 @@ src common/latency_monitor.vhd
 src --vhdl2008 common/tf_lut.vhd
 src --vhdl2008 common/tf_mem_bin.vhd
 src --vhdl2008 common/tf_mem.vhd
-src common/tf_pkg.vhd
+src common/tf_pkg_emp.vhd
 
 ################
 # Include Cores
