@@ -6,7 +6,7 @@
 -- Author     : Filippo Marini  <filippo.marini@cern.ch>
 -- Company    : University of Colorado Boulder
 -- Created    : 2022-06-21
--- Last update: 2022-07-06
+-- Last update: 2022-07-07
 -- Platform   : 
 -- Standard   : VHDL'93/02
 -------------------------------------------------------------------------------
@@ -71,7 +71,7 @@ begin  -- architecture rtl
 
   SectorProcessor_1 : entity work.SectorProcessor
     port map (
-      clk                     => clk,
+      clk                     => clk_p,
       reset                   => rst,
       IR_start                => s_ir_start,
       IR_bx_in                => s_bx,
