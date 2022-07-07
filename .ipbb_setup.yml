@@ -1,2 +1,2 @@
 init:
-  - cd firmware; make
+  - make -C firmware/
