@@ -3,7 +3,7 @@ source ../../../../project/env_hls.tcl
 source ../../../common/script/tools.tcl
 source ../../../common/script/build_ip.tcl
 linkCreate ../../IntegrationTests/common ../../../../firmware/hdl/common
-linkCreate ../../emData/MemPrintsReduce ../../../../firmware/mem/MemPrints
+linkCreate ../../emData/MemPrintsReduced ../../../../firmware/mem/MemPrints
 linkCreate ../../emData/LUTsReduced ../../../../firmware/mem/LUTs
 set cwd ../../../../firmware/cgn/
 cd $cwd

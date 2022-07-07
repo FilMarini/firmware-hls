@@ -22,18 +22,18 @@ src pkgs/hybrid_data_types.vhd
 src pkgs/tracklet_config.vhd
 src pkgs/tracklet_data_types.vhd
 
-src common/CreateStartSignal.vhd
-src common/FileReaderFIFO.vhd
-src common/FileReader.vhd
-src common/FileWriterFIFO.vhd
-src common/FileWriterFromRAMBinned.vhd
-src common/FileWriterFromRAM.vhd
-src common/FileWriter.vhd
-src common/latency_monitor.vhd
-src --vhdl2008 common/tf_lut.vhd
-src --vhdl2008 common/tf_mem_bin.vhd
-src --vhdl2008 common/tf_mem.vhd
-src common/tf_pkg_emp.vhd
+src common/hdl/CreateStartSignal.vhd
+src common/hdl/FileReaderFIFO.vhd
+src common/hdl/FileReader.vhd
+src common/hdl/FileWriterFIFO.vhd
+src common/hdl/FileWriterFromRAMBinned.vhd
+src common/hdl/FileWriterFromRAM.vhd
+src common/hdl/FileWriter.vhd
+src common/hdl/latency_monitor.vhd
+src --vhdl2008 common/hdl/tf_lut.vhd
+src --vhdl2008 common/hdl/tf_mem_bin.vhd
+src --vhdl2008 common/hdl/tf_mem.vhd
+src common/hdl/tf_pkg_emp.vhd
 
 ################
 # Include Cores
