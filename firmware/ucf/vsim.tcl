@@ -1,6 +1,6 @@
 set_property SOURCE_SET sources_1 [get_filesets sim_1]
-add_files -fileset sim_1 -norecurse ../emData/in.txt
-add_files -fileset sim_1 -norecurse ../emData/out.txt
+add_files -fileset sim_1 -norecurse ../../src/firmware-hls/firmware/mem/in.txt
+add_files -fileset sim_1 -norecurse ../../src/firmware-hls/firmware/mem/out.txt
 
 # Disabling source management mode.  This is to allow the top design properties to be set without GUI intervention.
 set_property source_mgmt_mode None [current_project]
