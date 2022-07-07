@@ -10,8 +10,7 @@ $(core_dir):
 	@mkdir cgn mem
 	cd $(hls_script_path); vivado_hls -f compileHLSforEMP.tcl;
 
-#$(core_file): $(core_dir)
-$(core_file):
+$(core_file): $(core_dir)
 	@python3 scripts/include_cores.py
 
 hdl_add_files: $(core_file)
