@@ -1,6 +1,7 @@
 src payload.vhd
 src linktosecproc.vhd
 src memUtil_pkg.vhd
+src SectorProcessor.vhd
 
 src tracklet_format/tracklet_format_in.vhd
 src tracklet_format/tracklet_format_out.vhd
@@ -15,6 +16,7 @@ src tracklet_isolation/tracklet_isolation_out_track.vhd
 
 src pkgs/emp_conv_pkg.vhd
 src pkgs/hybrid_config.vhd
+src pkgs/hybrid_tools.vhd
 src pkgs/hybrid_data_formats.vhd
 src pkgs/hybrid_data_types.vhd
 src pkgs/tracklet_config.vhd
@@ -28,7 +30,12 @@ src common/FileWriterFromRAMBinned.vhd
 src common/FileWriterFromRAM.vhd
 src common/FileWriter.vhd
 src common/latency_monitor.vhd
-src common/tf_lut.vhd
-src common/tf_mem_bin.vhd
-src common/tf_mem.vhd
+src --vhdl2008 common/tf_lut.vhd
+src --vhdl2008 common/tf_mem_bin.vhd
+src --vhdl2008 common/tf_mem.vhd
 src common/tf_pkg.vhd
+
+################
+# Include Cores
+################
+setup include_cores.tcl

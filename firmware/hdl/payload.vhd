@@ -6,7 +6,7 @@
 -- Author     : Filippo Marini  <filippo.marini@cern.ch>
 -- Company    : University of Colorado Boulder
 -- Created    : 2022-06-21
--- Last update: 2022-07-01
+-- Last update: 2022-07-06
 -- Platform   : 
 -- Standard   : VHDL'93/02
 -------------------------------------------------------------------------------
@@ -33,6 +33,7 @@ entity emp_payload is
     clk         : in  std_logic;
     rst         : in  std_logic;
     ipb_in      : in  ipb_wbus;
+    clk40       : in  std_logic;
     clk_payload : in  std_logic_vector(2 downto 0);
     rst_payload : in  std_logic_vector(2 downto 0);
     clk_p       : in  std_logic;
@@ -50,7 +51,9 @@ end;
 
 architecture rtl of emp_payload is
 
-  signal s_IR_data : t_arr_DL_39_DATA;
+  signal s_IR_data  : t_arr_DL_39_DATA;
+  signal s_ir_start : std_logic;
+  signal s_bx       : std_logic_vector(2 downto 0);
 
 begin  -- architecture rtl
 
@@ -59,9 +62,31 @@ begin  -- architecture rtl
       clk_i                => clk_p,
       ttc_i                => ctrs,
       din_i                => d,
+      ir_start_o           => s_ir_start,
+      bx_o                 => s_bx,
       DL_39_link_AV_dout   => s_IR_data,
       DL_39_link_empty_neg => open,
       DL_39_link_read      => (others => '0')
+      );
+
+  SectorProcessor_1 : entity work.SectorProcessor
+    port map (
+      clk                     => clk,
+      reset                   => rst,
+      IR_start                => s_ir_start,
+      IR_bx_in                => s_bx,
+      FT_bx_out               => open,
+      FT_bx_out_vld           => open,
+      FT_done                 => open,
+      DL_39_link_AV_dout      => s_IR_data,
+      DL_39_link_empty_neg    => (others => '1'),
+      DL_39_link_read         => open,
+      TW_84_stream_AV_din     => open,
+      TW_84_stream_A_full_neg => (others => '1'),
+      TW_84_stream_A_write    => open,
+      BW_46_stream_AV_din     => open,
+      BW_46_stream_A_full_neg => (others => '1'),
+      BW_46_stream_A_write    => open
       );
 
 end architecture rtl;
