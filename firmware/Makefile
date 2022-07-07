@@ -4,7 +4,7 @@ core_append = /impl/ip/component.xml
 core_path = ../../../src/firmware-hls/firmware
 hls_script_path = ../IntegrationTests/ReducedConfig/IRtoTB/script
 
-all: $(core_file) hls_add_files
+all: $(core_file) hdl_add_files
 
 $(core_dir):
 	@mkdir cgn mem
@@ -16,4 +16,4 @@ $(core_file): $(core_dir)
 hdl_add_files: $(core_file)
 	cd hdl; ln -s ../$(hls_script_path)/../hdl/*.vhd .
 
-.PHONY: hls_add_files
+.PHONY: hdl_add_files
