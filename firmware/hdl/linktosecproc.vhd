@@ -6,7 +6,7 @@
 -- Author     : Filippo Marini  <filippo.marini@cern.ch>
 -- Company    : University of Colorado Boulder
 -- Created    : 2022-06-27
--- Last update: 2022-07-05
+-- Last update: 2022-07-07
 -- Platform   : 
 -- Standard   : VHDL'93/02
 -------------------------------------------------------------------------------
@@ -31,7 +31,6 @@ use work.hybrid_config.all;
 use work.hybrid_data_types.all;
 use work.tracklet_config.all;
 use work.tracklet_data_types.all;
-use work.emp_conv_pkg.all;
 -- emp US
 use work.tf_pkg.all;
 use work.memUtil_pkg.all;

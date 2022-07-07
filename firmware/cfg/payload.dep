@@ -14,7 +14,6 @@ src tracklet_isolation/tracklet_isolation_out.vhd
 src tracklet_isolation/tracklet_isolation_out_stub.vhd
 src tracklet_isolation/tracklet_isolation_out_track.vhd
 
-src pkgs/emp_conv_pkg.vhd
 src pkgs/hybrid_config.vhd
 src pkgs/hybrid_tools.vhd
 src pkgs/hybrid_data_formats.vhd
