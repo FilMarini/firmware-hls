@@ -328,7 +328,7 @@ set_false_path -through [get_nets {ttc/tcds2_interface_stat[channel0_ttc2]*}] -t
 in
 
 ```
-emp-fw/components/top/firmware/ucf/clock_contsraints_tcds2.tcl
+emp-fw/components/top/firmware/ucf/clock_constraints_tcds2.tcl
 ```
 with
 ```
