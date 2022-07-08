@@ -339,7 +339,7 @@ set_false_path -through [get_nets {ttc/*tcds2_interface_stat[channel0_ttc2]*}] -
 
 For vivado simulation testbench:
 ```
-ipbb proj create sim vivado firmware-hls: 'vsim.dep'
+ipbb proj create vivado vsim firmware-hls: 'vsim.dep'
 cd proj/vsim
 ```
 
