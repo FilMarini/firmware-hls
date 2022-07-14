@@ -6,7 +6,7 @@
 -- Author     : Filippo Marini  <filippo.marini@cern.ch>
 -- Company    : University of Colorado Boulder
 -- Created    : 2022-06-21
--- Last update: 2022-07-07
+-- Last update: 2022-07-14
 -- Platform   : 
 -- Standard   : VHDL'93/02
 -------------------------------------------------------------------------------
@@ -51,9 +51,13 @@ end;
 
 architecture rtl of emp_payload is
 
-  signal s_IR_data  : t_arr_DL_39_DATA;
-  signal s_ir_start : std_logic;
-  signal s_bx       : std_logic_vector(2 downto 0);
+  signal s_IR_data            : t_arr_DL_39_DATA;
+  signal s_ir_start           : std_logic;
+  signal s_bx                 : std_logic_vector(2 downto 0);
+  signal s_TW_84_stream_data  : t_arr_TW_84_DATA;
+  signal s_TW_84_stream_valid : t_arr_TW_84_1b;
+  signal s_BW_46_stream_data  : t_arr_BW_46_DATA;
+  signal s_BW_46_stream_valid : t_arr_BW_46_1b;
 
 begin  -- architecture rtl
 
@@ -81,12 +85,24 @@ begin  -- architecture rtl
       DL_39_link_AV_dout      => s_IR_data,
       DL_39_link_empty_neg    => (others => '1'),
       DL_39_link_read         => open,
-      TW_84_stream_AV_din     => open,
+      TW_84_stream_AV_din     => s_TW_84_stream_data,
       TW_84_stream_A_full_neg => (others => '1'),
-      TW_84_stream_A_write    => open,
-      BW_46_stream_AV_din     => open,
+      TW_84_stream_A_write    => s_TW_84_stream_valid,
+      BW_46_stream_AV_din     => s_BW_46_stream_data,
       BW_46_stream_A_full_neg => (others => '1'),
-      BW_46_stream_A_write    => open
+      BW_46_stream_A_write    => s_BW_46_stream_valid
+      );
+
+  secproctolink_1 : entity work.secproctolink
+    port map (
+      clk_i                   => clk_p,
+      TW_84_stream_data_i     => s_TW_84_stream_data,
+      TW_84_stream_write_i    => s_TW_84_stream_valid,
+      TW_84_stream_full_neg_o => open,
+      BW_46_stream_data_i     => s_BW_46_stream_data,
+      BW_46_stream_write_i    => s_BW_46_stream_valid,
+      BW_46_stream_full_neg_i => open,
+      dout_o                  => q
       );
 
 end architecture rtl;

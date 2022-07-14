@@ -6,7 +6,7 @@
 -- Author     : Filippo Marini  <filippo.marini@cern.ch>
 -- Company    : University of Colorado Boulder
 -- Created    : 2022-06-27
--- Last update: 2022-07-07
+-- Last update: 2022-07-08
 -- Platform   : 
 -- Standard   : VHDL'93/02
 -------------------------------------------------------------------------------
@@ -24,13 +24,12 @@ use ieee.numeric_std.all;
 use work.emp_data_types.all;
 use work.emp_device_decl.all;
 use work.emp_ttc_decl.all;
-
 -- emp thomas
-use work.hybrid_tools.all;
-use work.hybrid_config.all;
-use work.hybrid_data_types.all;
-use work.tracklet_config.all;
-use work.tracklet_data_types.all;
+-- use work.hybrid_tools.all;
+-- use work.hybrid_config.all;
+-- use work.hybrid_data_types.all;
+-- use work.tracklet_config.all;
+-- use work.tracklet_data_types.all;
 -- emp US
 use work.tf_pkg.all;
 use work.memUtil_pkg.all;
@@ -50,47 +49,63 @@ end entity linktosecproc;
 
 architecture rtl of linktosecproc is
 
-  signal s_tracklet_reset : t_resets(numPPquads - 1 downto 0);
-  signal s_tracklet_isol  : t_stubsDTC;
-  signal s_tracklet_data  : t_datas(numInputsIR - 1 downto 0);
+  -- signal s_tracklet_reset : t_resets(numPPquads - 1 downto 0);
+  -- signal s_tracklet_isol  : t_stubsDTC;
+  -- signal s_tracklet_data  : t_datas(numInputsIR - 1 downto 0);
   signal s_ir_start       : std_logic;
+  signal s_ir_start_srff  : std_logic;
 
 begin  -- architecture rtl
 
-  tracklet_isolation_in_1 : entity work.tracklet_isolation_in
+  -- tracklet_isolation_in_1 : entity work.tracklet_isolation_in
+  --   port map (
+  --     clk      => clk_i,
+  --     in_ttc   => ttc_i,
+  --     in_din   => din_i,
+  --     in_reset => s_tracklet_reset,
+  --     in_dout  => s_tracklet_isol
+  --     );
+
+  -- tracklet_format_in_1 : entity work.tracklet_format_in
+  --   port map (
+  --     clk      => clk_i,
+  --     in_reset => s_tracklet_reset,
+  --     in_din   => s_tracklet_isol,
+  --     in_dout  => s_tracklet_data
+  --     );
+
+  -----------------------------------------------------------------------------
+  -- Connect input link data to IR in Sector Processor
+  -----------------------------------------------------------------------------
+  DL_39_link_AV_DOUT(PS10G_1_A) <= din_i(0).data(38 downto 0);
+  DL_39_link_AV_DOUT(PS10G_2_A) <= din_i(1).data(38 downto 0);
+  DL_39_link_AV_DOUT(PS10G_2_B) <= din_i(2).data(38 downto 0);
+  DL_39_link_AV_DOUT(PS10G_3_A) <= din_i(3).data(38 downto 0);
+  DL_39_link_AV_DOUT(PS10G_3_B) <= din_i(4).data(38 downto 0);
+  DL_39_link_AV_DOUT(PS_1_A)    <= din_i(5).data(38 downto 0);
+  DL_39_link_AV_DOUT(PS_2_A)    <= din_i(7).data(38 downto 0);
+  DL_39_link_AV_DOUT(PS_2_B)    <= din_i(8).data(38 downto 0);
+  DL_39_link_AV_DOUT(twoS_1_A)  <= din_i(9).data(38 downto 0);
+  DL_39_link_AV_DOUT(twoS_1_B)  <= din_i(10).data(38 downto 0);
+  DL_39_link_AV_DOUT(twoS_2_A)  <= din_i(11).data(38 downto 0);
+  DL_39_link_AV_DOUT(twoS_2_B)  <= din_i(12).data(38 downto 0);
+  DL_39_link_AV_DOUT(twoS_3_A)  <= din_i(13).data(38 downto 0);
+  DL_39_link_AV_DOUT(twoS_4_A)  <= din_i(15).data(38 downto 0);
+  DL_39_link_AV_DOUT(twoS_4_B)  <= din_i(16).data(38 downto 0);
+
+  -----------------------------------------------------------------------------
+  -- Generate start signal
+  -----------------------------------------------------------------------------
+  set_reset_ffd_1 : entity work.set_reset_ffd
     port map (
-      clk      => clk_i,
-      in_ttc   => ttc_i,
-      in_din   => din_i,
-      in_reset => s_tracklet_reset,
-      in_dout  => s_tracklet_isol
+      clk_i   => clk_i,
+      set_i   => din_i(0).valid,
+      reset_i => '0',
+      q_o     => s_ir_start_srff
       );
 
-  tracklet_format_in_1 : entity work.tracklet_format_in
-    port map (
-      clk      => clk_i,
-      in_reset => s_tracklet_reset,
-      in_din   => s_tracklet_isol,
-      in_dout  => s_tracklet_data
-      );
 
-  DL_39_link_AV_DOUT(PS10G_1_A) <= s_tracklet_data(0).data(r_dataDTC);
-  DL_39_link_AV_DOUT(PS10G_2_A) <= s_tracklet_data(1).data(r_dataDTC);
-  DL_39_link_AV_DOUT(PS10G_2_B) <= s_tracklet_data(2).data(r_dataDTC);
-  DL_39_link_AV_DOUT(PS10G_3_A) <= s_tracklet_data(3).data(r_dataDTC);
-  DL_39_link_AV_DOUT(PS10G_3_B) <= s_tracklet_data(4).data(r_dataDTC);
-  DL_39_link_AV_DOUT(PS_1_A)    <= s_tracklet_data(5).data(r_dataDTC);
-  DL_39_link_AV_DOUT(PS_2_A)    <= s_tracklet_data(7).data(r_dataDTC);
-  DL_39_link_AV_DOUT(PS_2_B)    <= s_tracklet_data(8).data(r_dataDTC);
-  DL_39_link_AV_DOUT(twoS_1_A)  <= s_tracklet_data(9).data(r_dataDTC);
-  DL_39_link_AV_DOUT(twoS_1_B)  <= s_tracklet_data(10).data(r_dataDTC);
-  DL_39_link_AV_DOUT(twoS_2_A)  <= s_tracklet_data(11).data(r_dataDTC);
-  DL_39_link_AV_DOUT(twoS_2_B)  <= s_tracklet_data(12).data(r_dataDTC);
-  DL_39_link_AV_DOUT(twoS_3_A)  <= s_tracklet_data(13).data(r_dataDTC);
-  DL_39_link_AV_DOUT(twoS_4_A)  <= s_tracklet_data(15).data(r_dataDTC);
-  DL_39_link_AV_DOUT(twoS_4_B)  <= s_tracklet_data(16).data(r_dataDTC);
-
-  s_ir_start <= s_tracklet_data(0).start;
+  s_ir_start <= din_i(0).valid or s_ir_start_srff;
   ir_start_o <= s_ir_start;
 
   p_bx_count : process (clk_i) is
