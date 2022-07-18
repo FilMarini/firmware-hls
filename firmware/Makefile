@@ -8,7 +8,7 @@ hls_script_path = ../IntegrationTests/ReducedConfig/IRtoTB/script
 all: $(core_file) hdl_add_files $(input_file)
 
 $(core_dir):
-	@mkdir cgn
+	@mkdir cgn mem
 	cd $(hls_script_path); vivado_hls -f compileHLSforEMP.tcl;
 
 $(core_file): $(core_dir)
