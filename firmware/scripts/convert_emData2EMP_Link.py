@@ -9,7 +9,7 @@ def parseArguments():
     parser = argparse.ArgumentParser(description="Convert an emData/ memory data file into a EMP format file. Link-file mapping is done editing the header of the script.")
  
     # Optional arguments
-    parser.add_argument("-d", "--directory", dest="inputDir", help="directory containing input data", type=str, default="emData/MemPrintsReduced/InputStubs/")
+    parser.add_argument("-d", "--directory", dest="inputDir", help="directory containing input data", type=str, default="emData/MemPrintsBarrel/InputStubs/")
     parser.add_argument("-o","--outFile", dest="outFile", help="output file name", type=str, default="Link_EMP.txt")
 
     # Parse arguments
@@ -20,25 +20,44 @@ def parseArguments():
 # Files in order in which they are referred to in memUtil_pkg.vhd.
 # with key being channel number.
 mapping = {}
-mapping[0]  = "Link_DL_PS10G_1_A_04.dat"
-mapping[1]  = "Link_DL_PS10G_2_A_04.dat"
-mapping[2]  = "Link_DL_PS10G_2_B_04.dat"
-mapping[3]  = "Link_DL_PS10G_3_A_04.dat"
-mapping[4]  = "Link_DL_PS10G_3_B_04.dat"
-mapping[5]  = "Link_DL_PS_1_A_04.dat"
-mapping[6]  = "Link_DL_PS_1_B_04.dat"
-mapping[7]  = "Link_DL_PS_2_A_04.dat"
-mapping[8]  = "Link_DL_PS_2_B_04.dat"
-mapping[9]  = "Link_DL_2S_1_A_04.dat"
-mapping[10]  = "Link_DL_2S_1_B_04.dat"
-mapping[11] = "Link_DL_2S_2_A_04.dat"
-mapping[12] = "Link_DL_2S_2_B_04.dat"
-mapping[13] = "Link_DL_2S_3_A_04.dat"
-mapping[14] = "Link_DL_2S_3_B_04.dat"
-mapping[15] = "Link_DL_2S_4_A_04.dat"
-mapping[16] = "Link_DL_2S_4_B_04.dat"
+mapping[0]  = "Link_DL_2S_1_A_04.dat"
+mapping[1]  = "Link_DL_2S_1_B_04.dat"
+mapping[2]  = "Link_DL_2S_2_A_04.dat"
+mapping[3]  = "Link_DL_2S_2_B_04.dat"
+mapping[4]  = "Link_DL_2S_3_A_04.dat"
+mapping[5]  = "Link_DL_2S_3_B_04.dat"
+mapping[6]  = "Link_DL_2S_4_A_04.dat"
+mapping[7]  = "Link_DL_2S_4_B_04.dat"
+mapping[8]  = "Link_DL_PS10G_1_A_04.dat"
+mapping[9]  = "Link_DL_PS10G_1_B_04.dat"
+mapping[10] = "Link_DL_PS10G_2_A_04.dat"
+mapping[11] = "Link_DL_PS10G_2_B_04.dat"
+mapping[12] = "Link_DL_PS10G_3_A_04.dat"
+mapping[13] = "Link_DL_PS10G_3_B_04.dat"
+mapping[14] = "Link_DL_PS_1_A_04.dat"
+mapping[15] = "Link_DL_PS_1_B_04.dat"
+mapping[16] = "Link_DL_PS_2_A_04.dat"
+mapping[17] = "Link_DL_PS_2_B_04.dat"
+mapping[18] = "Link_DL_neg2S_1_A_04.dat"
+mapping[19] = "Link_DL_neg2S_1_B_04.dat"
+mapping[20] = "Link_DL_neg2S_2_A_04.dat"
+mapping[21] = "Link_DL_neg2S_2_B_04.dat"
+mapping[22] = "Link_DL_neg2S_3_A_04.dat"
+mapping[23] = "Link_DL_neg2S_3_B_04.dat"
+mapping[24] = "Link_DL_neg2S_4_A_04.dat"
+mapping[25] = "Link_DL_neg2S_4_B_04.dat"
+mapping[26] = "Link_DL_negPS10G_1_A_04.dat"
+mapping[27] = "Link_DL_negPS10G_1_B_04.dat"
+mapping[28] = "Link_DL_negPS10G_2_A_04.dat"
+mapping[29] = "Link_DL_negPS10G_2_B_04.dat"
+mapping[30] = "Link_DL_negPS10G_3_A_04.dat"
+mapping[31] = "Link_DL_negPS10G_3_B_04.dat"
+mapping[32] = "Link_DL_negPS_1_A_04.dat"
+mapping[33] = "Link_DL_negPS_1_B_04.dat"
+mapping[34] = "Link_DL_negPS_2_A_04.dat"
+mapping[35] = "Link_DL_negPS_2_B_04.dat"
 
-channels = ["q00c0","q00c1","q00c2","q00c3","q01c0","q01c1","q01c2","q01c3","q02c0","q02c1","q02c2","q02c3","q03c0","q03c1","q03c2","q03c3","q04c0","q04c1"]
+channels = ["q00c0","q00c1","q00c2","q00c3","q01c0","q01c1","q01c2","q01c3","q02c0","q02c1","q02c2","q02c3","q03c0","q03c1","q03c2","q03c3","q04c0","q04c1","q04c2","q04c3","q05c0","q05c1","q05c2","q05c3","q06c0","q06c1","q06c2","q06c3","q07c0","q07c1","q07c2","q07c3","q08c0","q08c1","q08c2","q08c3"]
 
 empWordLen=16 # Hex chars in an EMP data word
 clksInTM=108 # Length of TM period in clock cycles
