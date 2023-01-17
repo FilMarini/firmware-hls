@@ -4,7 +4,8 @@ input_file = mem/in.txt
 proj_path = ../../../../proj
 hls_script_path = ../IntegrationTests/BarrelConfig/IRtoTB/script
 
-all: $(core_file) hdl_add_files xciCreation kfin_adj
+#all: $(core_file) hdl_add_files xciCreation kfin_adj
+all: $(core_file) hdl_add_files xciCreation $(input_file)
 
 $(core_dir):
 	@mkdir cgn mem
@@ -25,8 +26,8 @@ xciCreation: $(core_file)
 hdl_add_files: $(core_file)
 	cd hdl; ln -s ../$(hls_script_path)/../hdl/*.vhd .
 
-#$(input_file): $(core_dir)
-#	@python3 scripts/convert_emData2EMP_Link.py -d mem/MemPrintsBarrel/InputStubs -o $(input_file)
+$(input_file): $(core_dir)
+	@python3 scripts/convert_emData2EMP_Link.py -d mem/MemPrints/InputStubs -o $(input_file)
 
 sim: $(input_file) $(core_file) $(core_dir)
 	@ln -s $(proj_path)/vsim/vsim/vsim.sim/sim_1/behav/xsim/out.txt mem/out.txt
