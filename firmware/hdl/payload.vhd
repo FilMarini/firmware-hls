@@ -6,7 +6,7 @@
 -- Author     : Filippo Marini  <filippo.marini@cern.ch>
 -- Company    : University of Colorado Boulder
 -- Created    : 2022-06-21
--- Last update: 2022-07-22
+-- Last update: 2023-01-17
 -- Platform   : 
 -- Standard   : VHDL'93/02
 -------------------------------------------------------------------------------
@@ -24,28 +24,31 @@ use work.ipbus.all;
 use work.emp_data_types.all;
 use work.emp_device_decl.all;
 use work.emp_ttc_decl.all;
+use work.emp_slink_types.all;
 -- emp US
 use work.tf_pkg.all;
 use work.memUtil_pkg.all;
 
 entity emp_payload is
   port (
-    clk         : in  std_logic;
-    rst         : in  std_logic;
-    ipb_in      : in  ipb_wbus;
-    clk40       : in  std_logic;
-    clk_payload : in  std_logic_vector(2 downto 0);
-    rst_payload : in  std_logic_vector(2 downto 0);
-    clk_p       : in  std_logic;
-    rst_loc     : in  std_logic_vector(N_REGION - 1 downto 0);
-    clken_loc   : in  std_logic_vector(N_REGION - 1 downto 0);
-    ctrs        : in  ttc_stuff_array(N_REGION - 1 downto 0);
-    d           : in  ldata(4 * N_REGION - 1 downto 0);
-    ipb_out     : out ipb_rbus;
-    bc0         : out std_logic;
-    q           : out ldata(4 * N_REGION - 1 downto 0);
-    gpio        : out std_logic_vector(29 downto 0);
-    gpio_en     : out std_logic_vector(29 downto 0)
+    clk          : in  std_logic;
+    rst          : in  std_logic;
+    ipb_in       : in  ipb_wbus;
+    clk40        : in  std_logic;
+    clk_payload  : in  std_logic_vector(2 downto 0);
+    rst_payload  : in  std_logic_vector(2 downto 0);
+    clk_p        : in  std_logic;
+    rst_loc      : in  std_logic_vector(N_REGION - 1 downto 0);
+    clken_loc    : in  std_logic_vector(N_REGION - 1 downto 0);
+    ctrs         : in  ttc_stuff_array(N_REGION - 1 downto 0);
+    d            : in  ldata(4 * N_REGION - 1 downto 0);
+    ipb_out      : out ipb_rbus;
+    bc0          : out std_logic;
+    q            : out ldata(4 * N_REGION - 1 downto 0);
+    gpio         : out std_logic_vector(29 downto 0);
+    gpio_en      : out std_logic_vector(29 downto 0);
+    slink_q      : out slink_input_data_quad_array(SLINK_MAX_QUADS - 1 downto 0);
+    backpressure : in  std_logic_vector(SLINK_MAX_QUADS - 1 downto 0)
     );
 end;
 
