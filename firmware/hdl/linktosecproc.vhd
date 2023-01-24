@@ -6,7 +6,7 @@
 -- Author     : Filippo Marini  <filippo.marini@cern.ch>
 -- Company    : University of Colorado Boulder
 -- Created    : 2022-06-27
--- Last update: 2022-08-05
+-- Last update: 2023-01-18
 -- Platform   : 
 -- Standard   : VHDL'93/02
 -------------------------------------------------------------------------------
@@ -76,7 +76,7 @@ begin  -- architecture rtl
   --     in_dout  => s_tracklet_data
   --     );
 
-  GEN_DELAYED_DATA : for i in 0 to 16 generate
+  GEN_DELAYED_DATA : for i in 0 to 35 generate
     p_delay_data : process (clk_i) is
     begin  -- process p_delay_data
       if rising_edge(clk_i) then        -- rising clock edge
@@ -141,7 +141,7 @@ begin  -- architecture rtl
   ir_start_o <= s_ir_start;
 
   p_bx_count : process (clk_i) is
-    variable v_bx         : integer;
+    variable v_bx         : natural;
     variable v_word_count : natural := 1;
   begin  -- process p_bx_count
     if rising_edge(clk_i) then          -- rising clock edge

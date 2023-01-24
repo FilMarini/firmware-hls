@@ -11,7 +11,7 @@ constant SINK_FILE           : string := "out.txt";
 
 constant PLAYBACK_LENGTH     : integer := 100 * 108;
 constant CAPTURE_LENGTH      : integer := 100 * 108;
-constant WAIT_CYCLES_AT_START: integer := 0;
+constant WAIT_CYCLES_AT_START: integer := 100;
 constant PLAYBACK_OFFSET     : integer := 0;
 constant CAPTURE_OFFSET      : integer := PAYLOAD_LATENCY + 3;
 
