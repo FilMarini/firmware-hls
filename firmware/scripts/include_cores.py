@@ -8,7 +8,7 @@ sub_tos = ["", "IR", "VMR", "TE", "TC", "PR", "ME", "MC", "FT"]
 
 #create file and write first line
 core_file = 'scripts/xciMaker'
-part = 'xcvu13p-flga2577-2-e'
+part = 'xcvu13p-flga2577-1-e'
 dir_path = 'cgn'
 f = open(core_file, "w")
 
