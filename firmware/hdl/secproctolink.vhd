@@ -6,7 +6,7 @@
 -- Author     : Filippo Marini  <filippo.marini@cern.ch>
 -- Company    : University of Colorado Boulder
 -- Created    : 2022-07-13
--- Last update: 2022-07-26
+-- Last update: 2023-01-30
 -- Platform   : 
 -- Standard   : VHDL'93/02
 -------------------------------------------------------------------------------
@@ -66,74 +66,126 @@ architecture rtl of secproctolink is
     TUSER_MODE_C  => TUSER_FIRST_LAST_C
     );
 
-  signal s_fifo_valid     : std_logic;
-  signal s_fifo_valid_vec : std_logic_vector(4 downto 0);
-  signal s_fifo_ready     : std_logic;
-  signal s_fifo_data      : std_logic_vector(319 downto 0);
-  signal s_sAxisMaster_sp : AxiStreamMasterType;
-  signal s_sAxisSlave_sp  : AxiStreamSlaveType;
-  signal s_mAxisMaster_l  : AxiStreamMasterType;
-  signal s_mAxisSlave_l   : AxiStreamSlaveType;
+  type t_fifo_valid_vec is array (enum_TW_84) of std_logic_vector(4 downto 0);
+  type t_fifo_valid is array (enum_TW_84) of std_logic;
+  type t_fifo_data is array (enum_TW_84) of std_logic_vector(319 downto 0);
+
+  signal s_fifo_valid     : t_fifo_valid;
+  signal s_fifo_valid_vec : t_fifo_valid_vec;
+  signal s_fifo_ready     : t_fifo_valid;
+  signal s_fifo_data      : t_fifo_data;
+  signal s_BW_46_null     : std_logic_vector(45 downto 0) := "0000000000000000000000000000000000000000000000";
 
 begin  -- architecture rtl
 
   -----------------------------------------------------------------------------
   -- FIFO input array
   -----------------------------------------------------------------------------
-  s_fifo_valid_vec                 <= TW_84_stream_write_i(L1L2) & BW_46_stream_write_i(L1L2_L3) & BW_46_stream_write_i(L1L2_L4) & BW_46_stream_write_i(L1L2_L5) & BW_46_stream_write_i(L1L2_L6);
-  s_fifo_valid                     <= or_reduce(s_fifo_valid_vec);
-  TW_84_stream_full_neg_o(L1L2)    <= s_fifo_ready;
-  BW_46_stream_full_neg_i(L1L2_L3) <= s_fifo_ready;
-  BW_46_stream_full_neg_i(L1L2_L4) <= s_fifo_ready;
-  BW_46_stream_full_neg_i(L1L2_L5) <= s_fifo_ready;
-  BW_46_stream_full_neg_i(L1L2_L6) <= s_fifo_ready;
-  s_fifo_data                      <= x"805A0123456" &
-                 TW_84_stream_data_i(L1L2) &
-                 BW_46_stream_data_i(L1L2_L3) &
-                 BW_46_stream_data_i(L1L2_L4) &
-                 BW_46_stream_data_i(L1L2_L5) &
-                 BW_46_stream_data_i(L1L2_L6) &
-                 x"00";
+  s_fifo_valid_vec(L3L4) <= TW_84_stream_write_i(L3L4) & BW_46_stream_write_i(L3L4_L1) & BW_46_stream_write_i(L3L4_L2) & BW_46_stream_write_i(L3L4_L5) & BW_46_stream_write_i(L3L4_L6);
+  s_fifo_valid_vec(L5L6) <= TW_84_stream_write_i(L5L6) & BW_46_stream_write_i(L5L6_L1) & BW_46_stream_write_i(L5L6_L2) & BW_46_stream_write_i(L5L6_L3) & BW_46_stream_write_i(L5L6_L4);
+  s_fifo_valid_vec(L2L3) <= TW_84_stream_write_i(L2L3) & BW_46_stream_write_i(L2L3_L1) & BW_46_stream_write_i(L2L3_L4) & BW_46_stream_write_i(L2L3_L5) & '0';
+  s_fifo_valid_vec(L1L2) <= TW_84_stream_write_i(L1L2) & BW_46_stream_write_i(L1L2_L3) & BW_46_stream_write_i(L1L2_L4) & BW_46_stream_write_i(L1L2_L5) & BW_46_stream_write_i(L1L2_L6);
+
+  s_fifo_valid(L3L4) <= or_reduce(s_fifo_valid_vec(L3L4));
+  s_fifo_valid(L5L6) <= or_reduce(s_fifo_valid_vec(L5L6));
+  s_fifo_valid(L2L3) <= or_reduce(s_fifo_valid_vec(L2L3));
+  s_fifo_valid(L1L2) <= or_reduce(s_fifo_valid_vec(L1L2));
+
+  TW_84_stream_full_neg_o(L3L4)    <= s_fifo_ready(L3L4);
+  BW_46_stream_full_neg_i(L3L4_L1) <= s_fifo_ready(L3L4);
+  BW_46_stream_full_neg_i(L3L4_L2) <= s_fifo_ready(L3L4);
+  BW_46_stream_full_neg_i(L3L4_L5) <= s_fifo_ready(L3L4);
+  BW_46_stream_full_neg_i(L3L4_L6) <= s_fifo_ready(L3L4);
+  TW_84_stream_full_neg_o(L5L6)    <= s_fifo_ready(L5L6);
+  BW_46_stream_full_neg_i(L5L6_L1) <= s_fifo_ready(L5L6);
+  BW_46_stream_full_neg_i(L5L6_L2) <= s_fifo_ready(L5L6);
+  BW_46_stream_full_neg_i(L5L6_L3) <= s_fifo_ready(L5L6);
+  BW_46_stream_full_neg_i(L5L6_L4) <= s_fifo_ready(L5L6);
+  TW_84_stream_full_neg_o(L2L3)    <= s_fifo_ready(L2L3);
+  BW_46_stream_full_neg_i(L2L3_L1) <= s_fifo_ready(L2L3);
+  BW_46_stream_full_neg_i(L2L3_L4) <= s_fifo_ready(L2L3);
+  BW_46_stream_full_neg_i(L2L3_L5) <= s_fifo_ready(L2L3);
+  TW_84_stream_full_neg_o(L1L2)    <= s_fifo_ready(L1L2);
+  BW_46_stream_full_neg_i(L1L2_L3) <= s_fifo_ready(L1L2);
+  BW_46_stream_full_neg_i(L1L2_L4) <= s_fifo_ready(L1L2);
+  BW_46_stream_full_neg_i(L1L2_L5) <= s_fifo_ready(L1L2);
+  BW_46_stream_full_neg_i(L1L2_L6) <= s_fifo_ready(L1L2);
+
+  s_fifo_data(L3L4) <= x"805A0123456" &
+                       TW_84_stream_data_i(L3L4) &
+                       BW_46_stream_data_i(L3L4_L1) &
+                       BW_46_stream_data_i(L3L4_L2) &
+                       BW_46_stream_data_i(L3L4_L5) &
+                       BW_46_stream_data_i(L3L4_L6) &
+                       x"00";
+  s_fifo_data(L5L6) <= x"805A0123456" &
+                       TW_84_stream_data_i(L5L6) &
+                       BW_46_stream_data_i(L5L6_L1) &
+                       BW_46_stream_data_i(L5L6_L2) &
+                       BW_46_stream_data_i(L5L6_L3) &
+                       BW_46_stream_data_i(L5L6_L4) &
+                       x"00";
+  s_fifo_data(L2L3) <= x"805A0123456" &
+                       TW_84_stream_data_i(L2L3) &
+                       BW_46_stream_data_i(L2L3_L1) &
+                       BW_46_stream_data_i(L2L3_L4) &
+                       BW_46_stream_data_i(L2L3_L5) &
+                       s_BW_46_null &
+                       x"00";
+  s_fifo_data(L1L2) <= x"805A0123456" &
+                       TW_84_stream_data_i(L1L2) &
+                       BW_46_stream_data_i(L1L2_L3) &
+                       BW_46_stream_data_i(L1L2_L4) &
+                       BW_46_stream_data_i(L1L2_L5) &
+                       BW_46_stream_data_i(L1L2_L6) &
+                       x"00";
 
   -----------------------------------------------------------------------------
-  -- FIFO
+  -- FIFOs
   -----------------------------------------------------------------------------
-  s_sAxisMaster_sp.tData(319 downto 0)                                 <= s_fifo_data;
-  s_sAxisMaster_sp.tData(s_sAxisMaster_sp.tData'length - 1 downto 320) <= (others => '0');
-  s_sAxisMaster_sp.tValid                                              <= s_fifo_valid;
-  s_sAxisMaster_sp.tKeep                                               <= x"000000FFFFFFFFFF";
-  s_fifo_ready                                                         <= s_sAxisSlave_sp.tReady;
-  dout_o(0).data                                                       <= s_mAxisMaster_l.tData(63 downto 0);
-  dout_o(0).valid                                                      <= s_mAxisMaster_l.tValid;
-  dout_o(0).strobe                                                     <= '1';
-  s_mAxisSlave_l.tReady                                                <= '1';
+  GEN_FIFOS : for i in s_fifo_data'left to s_fifo_data'right generate
+    signal s_sAxisMaster_sp : AxiStreamMasterType;
+    signal s_sAxisSlave_sp  : AxiStreamSlaveType;
+    signal s_mAxisMaster_l  : AxiStreamMasterType;
+    signal s_mAxisSlave_l   : AxiStreamSlaveType;
+  begin
+    s_sAxisMaster_sp.tData(319 downto 0)                                 <= s_fifo_data(i);
+    s_sAxisMaster_sp.tData(s_sAxisMaster_sp.tData'length - 1 downto 320) <= (others => '0');
+    s_sAxisMaster_sp.tValid                                              <= s_fifo_valid(i);
+    s_sAxisMaster_sp.tKeep                                               <= x"000000FFFFFFFFFF";
+    s_fifo_ready(i)                                                      <= s_sAxisSlave_sp.tReady;
+    dout_o(enum_TW_84'pos(i)).data                                       <= s_mAxisMaster_l.tData(63 downto 0);
+    dout_o(enum_TW_84'pos(i)).valid                                      <= s_mAxisMaster_l.tValid;
+    dout_o(enum_TW_84'pos(i)).strobe                                     <= '1';
+    s_mAxisSlave_l.tReady                                                <= '1';
 
-  AxiStreamFifoV2_1 : entity surf.AxiStreamFifoV2
-    generic map (
-      LITTLE_ENDIAN_G     => false,
-      GEN_SYNC_FIFO_G     => true,
-      FIFO_ADDR_WIDTH_G   => 4,
-      -- SYNTH_MODE_G           => SYNTH_MODE_G,
-      -- MEMORY_TYPE_G          => MEMORY_TYPE_G,
-      SLAVE_AXI_CONFIG_G  => BIG_BIT_CONFIG_G,
-      MASTER_AXI_CONFIG_G => SMALL_BIT_CONFIG_G
-      )
-    port map (
-      sAxisClk    => clk_i,
-      sAxisRst    => '0',
-      sAxisMaster => s_sAxisMaster_sp,
-      sAxisSlave  => s_sAxisSlave_sp,
-      sAxisCtrl   => open,
-      -- fifoPauseThresh => fifoPauseThresh,
-      -- fifoWrCnt       => fifoWrCnt,
-      -- fifoFull        => fifoFull,
-      mAxisClk    => clk_i,
-      mAxisRst    => '0',
-      mAxisMaster => s_mAxisMaster_l,
-      mAxisSlave  => s_mAxisSlave_l,
-      mTLastTUser => open
-      );
+    AxiStreamFifoV2_1 : entity surf.AxiStreamFifoV2
+      generic map (
+        LITTLE_ENDIAN_G     => false,
+        GEN_SYNC_FIFO_G     => true,
+        FIFO_ADDR_WIDTH_G   => 4,
+        -- SYNTH_MODE_G           => SYNTH_MODE_G,
+        -- MEMORY_TYPE_G          => MEMORY_TYPE_G,
+        SLAVE_AXI_CONFIG_G  => BIG_BIT_CONFIG_G,
+        MASTER_AXI_CONFIG_G => SMALL_BIT_CONFIG_G
+        )
+      port map (
+        sAxisClk    => clk_i,
+        sAxisRst    => '0',
+        sAxisMaster => s_sAxisMaster_sp,
+        sAxisSlave  => s_sAxisSlave_sp,
+        sAxisCtrl   => open,
+        -- fifoPauseThresh => fifoPauseThresh,
+        -- fifoWrCnt       => fifoWrCnt,
+        -- fifoFull        => fifoFull,
+        mAxisClk    => clk_i,
+        mAxisRst    => '0',
+        mAxisMaster => s_mAxisMaster_l,
+        mAxisSlave  => s_mAxisSlave_l,
+        mTLastTUser => open
+        );
 
+  end generate GEN_FIFOS;
 
 
 end architecture rtl;
