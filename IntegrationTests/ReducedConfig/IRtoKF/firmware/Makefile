@@ -2,7 +2,7 @@ core_file = scripts/xciMaker
 core_dir = cgn
 input_file = mem/in.txt
 proj_path = ../../../../proj
-hls_script_path = ../script
+hls_script_path = ../../IRtoTB/script
 
 all: $(core_file) hdl_add_files xciCreation kfin_adj
 
