@@ -401,7 +401,7 @@ Currently the supported chain configurations for EMP builds are:
 * **Skinny Chain**
   * InputRouter to KalmanFilter
     * Target: Apollo VU7P
-    * Path: `/IntegrationTests/ReducedConfig/IRtoKF`
+    * Path: `IntegrationTests/ReducedConfig/IRtoKF`
 
 ### Prerequisites
 
@@ -433,6 +433,11 @@ ipbb add git https://github.com/FilMarini/firmware-hls -b emp_for_sc #LONG WAIT!
 ```
 
 *Note: You need to be a member of the `cms-tcds2-users` egroup in order to clone the `cms-tcds2-firmware` repository. In order to add yourself to that egroup, go to the "Members" tab of [this page](https://e-groups.cern.ch/e-groups/Egroup.do?egroupId=10380295), and click on the "Add me" button; you may need to wait ~ 24 hours to get access to the GitLab repo.*
+
+```
+cd src/firmware-hls
+make -C <EMP build path>/firmware
+```
 
 ### Vivado Simulation
 

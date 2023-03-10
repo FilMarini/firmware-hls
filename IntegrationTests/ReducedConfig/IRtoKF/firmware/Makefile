@@ -15,13 +15,13 @@ $(core_dir):
 	ln -s ../../../../common hdl/common
 
 $(core_file): $(core_dir)
-	@python3 scripts/include_cores.py
+	@python3 scripts/include_cores.py -s $(hls_script_path)
 
 kfin_adj:
 	@python3 scripts/kf_link_mod.py
 
 xciCreation: $(core_file)
-	make -f scripts/xciMaker -j 8 all
+	make -f $(core_file) -j 8 all
 
 hdl_add_files: $(core_file)
 	cd hdl; ln -s ../../../IRtoTB/hdl/*.vhd .
