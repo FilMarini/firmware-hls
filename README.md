@@ -394,9 +394,14 @@ In order to keep the GitHub repository public we use GitHub Actions and GitLab C
 
 ## EMP
 
-Summer Chain with EMP can bu built using this repository.
+Build the tracklet chain in EMP.
 
-Currently the project is built against the Apollo board with VU7P FPGA.
+Currently the supported chain configurations for EMP builds are:
+
+* **Skinny Chain**
+  * InputRouter to KalmanFilter
+    * Target: Apollo VU7P
+    * Path: `/IntegrationTests/ReducedConfig/IRtoKF`
 
 ### Prerequisites
 
@@ -435,7 +440,7 @@ ipbb add git https://github.com/FilMarini/firmware-hls -b emp_for_sc #LONG WAIT!
 
 For vivado simulation testbench:
 ```
-ipbb proj create vivado vsim firmware-hls:IntegrationTests/ReducedConfig/IRtoTB 'vsim.dep'
+ipbb proj create vivado vsim firmware-hls:<EMP build path> 'vsim.dep'
 cd proj/vsim
 ```
 
@@ -443,7 +448,7 @@ cd proj/vsim
 
 * For questa simulation testbench:
 ```
-ipbb proj create sim qsim firmware-hls:IntegrationTests/ReducedConfig/IRtoTB 'qsim.dep'
+ipbb proj create sim qsim firmware-hls:<EMP build path> 'qsim.dep'
 cd proj/qsim
 ipbb sim setup-simlib
 ipbb sim ipcores
@@ -471,7 +476,7 @@ and start the simulation from GUI (first time will take long).
 **Step 2: Create an ipbb project area**
 
 ```
-ipbb proj create vivado apollo firmware-hls:IntegrationTests/ReducedConfig/IRtoTB 'apollo.dep'
+ipbb proj create vivado apollo firmware-hls:<EMP build path> 'apollo.dep'
 cd proj/apollo
 ```
 
@@ -487,7 +492,7 @@ ipbb vivado generate-project synth -j8 impl -j8 package
 **Step 2: Create an ipbb project area**
 
 ```
-ipbb proj create vivado serenity firmware-hls:IntegrationTests/ReducedConfig/IRtoTB 'serenity.dep'
+ipbb proj create vivado serenity firmware-hls:<EMP build path> 'serenity.dep'
 cd proj/serenity
 ```
 

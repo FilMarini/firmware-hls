@@ -9,9 +9,9 @@ all: $(core_file) hdl_add_files xciCreation kfin_adj
 $(core_dir):
 	@mkdir cgn mem
 	make -C $(hls_script_path) -j 8 Work
-	@mkdir ../../../../emData/emData_for_emp
-	ln -s ../LUTsReduced ../../../../emData/emData_for_emp/LUTs
-	ln -s ../MemPrintsReduced ../../../../emData/emData_for_emp/MemPrints
+	#@mkdir ../../../../emData/emData_for_emp
+	#ln -s ../LUTsReduced ../../../../emData/emData_for_emp/LUTs
+	#ln -s ../MemPrintsReduced ../../../../emData/emData_for_emp/MemPrints
 	ln -s ../../../../common hdl/common
 
 $(core_file): $(core_dir)
@@ -24,7 +24,7 @@ xciCreation: $(core_file)
 	make -f scripts/xciMaker -j 8 all
 
 hdl_add_files: $(core_file)
-	cd hdl; ln -s ../../hdl/*.vhd .
+	cd hdl; ln -s ../../../IRtoTB/hdl/*.vhd .
 
 #$(input_file): $(core_dir)
 #	@python3 scripts/convert_emData2EMP_Link.py -d mem/MemPrintsReduced/InputStubs -o $(input_file)
