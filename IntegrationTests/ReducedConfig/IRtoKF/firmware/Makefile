@@ -4,11 +4,13 @@ input_file = mem/in.txt
 proj_path = ../../../../proj
 hls_script_path = ../../IRtoTB/script
 
-all: $(core_file) hdl_add_files xciCreation kfin_adj lut_inclusion
+all: $(core_file) hdl_add_files xciCreation kfin_adj
 
 $(core_dir):
 	@mkdir cgn mem
 	make -C $(hls_script_path) -j 8 Work
+	ln -s ../../../../../emData/LUTsReduced mem/LUTs
+	ln -s ../../../../../emData/MemPrintsReduced mem/MemPrintsReduced
 	ln -s ../../../../common hdl/common
 
 $(core_file): $(core_dir)
@@ -26,8 +28,8 @@ hdl_add_files: $(core_file)
 lut_inclusion:
 	@python3 scripts/lut_copy.py
 
-#$(input_file): $(core_dir)
-#	@python3 scripts/convert_emData2EMP_Link.py -d mem/MemPrintsReduced/InputStubs -o $(input_file)
+$(input_file): $(core_dir)
+	@python3 scripts/convert_emData2EMP_Link.py -d mem/MemPrintsReduced/InputStubs -o $(input_file)
 
 sim: $(input_file) $(core_file) $(core_dir)
 	@ln -s $(proj_path)/vsim/vsim/vsim.sim/sim_1/behav/xsim/out.txt mem/out.txt
