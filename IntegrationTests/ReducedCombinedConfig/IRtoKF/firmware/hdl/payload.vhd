@@ -6,7 +6,7 @@
 -- Author     : Filippo Marini  <filippo.marini@cern.ch>
 -- Company    : University of Colorado Boulder
 -- Created    : 2022-06-21
--- Last update: 2023-02-21
+-- Last update: 2023-04-13
 -- Platform   : 
 -- Standard   : VHDL'93/02
 -------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ use work.ipbus.all;
 use work.emp_data_types.all;
 use work.emp_device_decl.all;
 use work.emp_ttc_decl.all;
-use work.emp_slink_types.all;
+-- use work.emp_slink_types.all;
 -- tf
 use work.tf_pkg.all;
 use work.memUtil_pkg.all;
@@ -51,7 +51,7 @@ entity emp_payload is
     q            : out ldata(4 * N_REGION - 1 downto 0);
     gpio         : out std_logic_vector(29 downto 0);
     gpio_en      : out std_logic_vector(29 downto 0);
-    slink_q      : out slink_input_data_quad_array(SLINK_MAX_QUADS - 1 downto 0);
+    -- slink_q      : out slink_input_data_quad_array(SLINK_MAX_QUADS - 1 downto 0);
     backpressure : in  std_logic_vector(SLINK_MAX_QUADS - 1 downto 0)
     );
 end;
@@ -75,7 +75,7 @@ begin  -- architecture rtl
   -----------------------------------------------------------------------------
   -- EMP ports
   -----------------------------------------------------------------------------
-  slink_q <= (others => SLINK_INPUT_DATA_ARRAY_NULL);
+  -- slink_q <= (others => SLINK_INPUT_DATA_ARRAY_NULL);
   gpio    <= (others => '0');
   gpio_en <= (others => '0');
   ipb_out <= IPB_RBUS_NULL;

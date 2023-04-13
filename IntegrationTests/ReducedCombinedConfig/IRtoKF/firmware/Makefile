@@ -23,7 +23,7 @@ xciCreation: $(core_file) core_patch
 	make -f $(core_file) -j 8 all
 
 core_patch:
-	@sed -i 's/v7_1_10/v7_1_13/g' $(core_dir)/VMR_L1PHIB/hdl/ip/*.vhd
+	#@sed -i 's/v7_1_10/v7_1_13/g' $(core_dir)/VMR_L1PHIB/hdl/ip/*.vhd
 
 hdl_add_files: $(core_file)
 	cd hdl; ln -s ../../../hdl/*.vhd .
